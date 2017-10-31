@@ -59,9 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TestFiles\In\test.zip" />
-    <None Include="TestFiles\In\testi_recursive.zip" />
-    <None Include="TestFiles\In\test_w_password.zip" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Frends.Community.Zip\Frends.Community.Zip.csproj">
@@ -70,9 +67,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TestFiles\In\Exists.txt" />
-    <Content Include="TestFiles\In\Test1.txt" />
-    <Content Include="TestFiles\In\Test2.txt" />
     <Content Include="TestFiles\In\XmlTest1.xml" />
     <Content Include="TestFiles\In\XmlTest2.xml" />
   </ItemGroup>
