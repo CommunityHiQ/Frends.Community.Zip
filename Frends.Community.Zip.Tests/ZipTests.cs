@@ -44,8 +44,8 @@ namespace FRENDS.Community.Tests
         public void ZipFiles()
         {
             //non-recursive test
-            Zip.ZipInputParameters input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi.zip");
-            Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi.zip");
+            Zip.Output output = Zip.CreateArchive(input);
             StringAssert.AreEqualIgnoringCase("testi.zip", output.Filename);
             Assert.AreEqual(2, output.Filecount);
             Assert.That(File.Exists(_dirOut + "testi.zip"));
@@ -55,8 +55,8 @@ namespace FRENDS.Community.Tests
         public void ZipFiles_recursive_test()
         {
             //Scan subdirectories
-            Zip.ZipInputParameters input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_recursive.zip", true);
-            Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_recursive.zip", true);
+            Zip.Output output = Zip.CreateArchive(input);
             Assert.AreEqual(4, output.Filecount);
             Assert.That(File.Exists(_dirOut + "testi_recursive.zip"));
         }
@@ -65,8 +65,8 @@ namespace FRENDS.Community.Tests
         public void ZipFiles_create_flatfile()
         {
             //creates a flat file 
-            Zip.ZipInputParameters input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_flatfile.zip", true, true);
-            Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_flatfile.zip", true, true);
+            Zip.Output output = Zip.CreateArchive(input);
             Assert.AreEqual(4, output.Filecount);
             Assert.That(File.Exists(_dirOut + "testi_flatfile.zip"));
 
@@ -77,8 +77,8 @@ namespace FRENDS.Community.Tests
             //trying to create an empty archive
             try
             {
-                Zip.ZipInputParameters input = this.InputHelperZip(_dirIn, _dirOut, "*.abc", "testi_empty.zip", true, true,true);
-                Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+                Zip.Source input = this.InputHelperZip(_dirIn, _dirOut, "*.abc", "testi_empty.zip", true, true,true);
+                Zip.Output output = Zip.CreateArchive(input);
             }
             catch(Exception e)
             {
@@ -92,8 +92,8 @@ namespace FRENDS.Community.Tests
             // Try to use a non-existing directory as a destination
             try
             {
-                Zip.ZipInputParameters input = InputHelperZip(_dirIn, _dirOut + @"/testi6/", "*.xml", "testi.zip");
-                Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+                Zip.Source input = InputHelperZip(_dirIn, _dirOut + @"/testi6/", "*.xml", "testi.zip");
+                Zip.Output output = Zip.CreateArchive(input);
             }
             catch (DirectoryNotFoundException ex)
             {
@@ -108,8 +108,8 @@ namespace FRENDS.Community.Tests
             // Try to use a non-existing directory as a source
             try
             {
-                Zip.ZipInputParameters input = InputHelperZip(_dirIn + @"/testi6/", _dirOut, "*.xml", "testi.zip");
-                Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+                Zip.Source input = InputHelperZip(_dirIn + @"/testi6/", _dirOut, "*.xml", "testi.zip");
+                Zip.Output output = Zip.CreateArchive(input);
             }
             catch (DirectoryNotFoundException ex)
             {
@@ -123,17 +123,17 @@ namespace FRENDS.Community.Tests
         public void ZipFiles_WithPassword()
         {
             //create an archive using a password
-            Zip.ZipInputParameters input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_w_password.zip", false, false, false, "SalaKala3");
-            Zip.ZipOutputInfo output = Zip.CreateArchive(input);
+            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_w_password.zip", false, false, false, "SalaKala3");
+            Zip.Output output = Zip.CreateArchive(input);
 
             StringAssert.AreEqualIgnoringCase("testi_w_password.zip", output.Filename);
             Assert.That(File.Exists(_dirOut + "testi_w_password.zip"));
         }
 
         //helper methods for Zip_v3 tests
-        private Zip.ZipInputParameters InputHelperZip(String source, String destination, string mask, string filename, Boolean recursive = false, Boolean flat = false, Boolean error = true, string password = null)
+        private Zip.Source InputHelperZip(String source, String destination, string mask, string filename, Boolean recursive = false, Boolean flat = false, Boolean error = true, string password = null)
         {
-            Zip.ZipInputParameters input = new Zip.ZipInputParameters()
+            Zip.Source input = new Zip.Source()
             {
                 SourcePath = source,
                 DestinationPath = destination,

@@ -17,20 +17,32 @@ namespace Frends.Community.Zip
         /// <summary>
         /// Zip input parameters class
         /// </summary>
-        public class ZipInputParameters
+        public class Source
         {
-            /// <summary>
-            /// Filename
-            /// </summary>
-            [DisplayName("Filename")]
-            [DefaultValue("\"\"")]
-            public string Filename { get; set; }
             /// <summary>
             /// Source path
             /// </summary>
             [DisplayName("Source path")]
             [DefaultValue("\"\\\"")]
             public string SourcePath { get; set; }
+
+            [DisplayName("File mask")]
+            [DefaultValue("\"*\"")]
+            public string FileMask { get; set; }
+        }
+
+        /// <summary>
+        /// The destination parameters of the class inputs
+        /// </summary>
+        public class Destination
+        {
+            /// <summary>
+            /// Filename of the zip to create
+            /// </summary>
+            [DisplayName("Filename")]
+            [DefaultValue("\"\"")]
+            public string Filename { get; set; }
+
             /// <summary>
             /// Destination path
             /// </summary>
@@ -40,26 +52,30 @@ namespace Frends.Community.Zip
             /// <summary>
             /// Filemask
             /// </summary>
-            [DisplayName("File mask")]
-            [DefaultValue("\"*\"")]
-            public string FileMask { get; set; }
+        }
+
+        public class Options
+        {
             /// <summary>
             /// Recursive scan
             /// </summary>
             [DisplayName("Add directories ?")]
             [DefaultValue(true)]
             public bool AddDirectories { get; set; }
+
             /// <summary>
             /// Create a flat file archive
             /// </summary>
             [DisplayName("Create a flat archive ?")]
             [DefaultValue(false)]
             public bool CreateFlatfile { get; set; }
+
             /// <summary>
             /// Adds a password to archive
             /// </summary>
             [PasswordPropertyText]
             public string Password { get; set; }
+
             /// <summary>
             /// If set to true, will throw an error
             /// when task tries to create an empty archive
@@ -68,10 +84,11 @@ namespace Frends.Community.Zip
             [DefaultValue(true)]
             public bool EmptyZipError { get; set; }
         }
+
         /// <summary>
         /// zip output info class
         /// </summary>
-        public class ZipOutputInfo
+        public class Output
         {
             /// <summary>
             /// Filename
@@ -86,39 +103,39 @@ namespace Frends.Community.Zip
         /// <summary>
         /// A FRENDS task for creating zip-archives. 
         /// </summary>
-        /// <param name="inParameters">ZipInputParameters-object</param>
+        /// <param name="SourceParams">ZipInputParameters-object</param>
         /// <returns>ZipOutputInfo-object</returns>
-        public static ZipOutputInfo CreateArchive(ZipInputParameters inParameters)
+        public static Output CreateArchive(Source SourceParams, Destination DestinationParams, Options OptionParams)
         {
-            DirectoryInfo sourceDirInfo = new DirectoryInfo(inParameters.SourcePath);
-            DirectoryInfo destDirInfo = new DirectoryInfo(inParameters.DestinationPath);
+            DirectoryInfo sourceDirInfo = new DirectoryInfo(SourceParams.SourcePath);
+            DirectoryInfo destDirInfo = new DirectoryInfo(DestinationParams.DestinationPath);
 
             //adds a directory separator char
-            inParameters.DestinationPath = inParameters.DestinationPath.TrimEnd(System.IO.Path.DirectorySeparatorChar) + @"\";
+            SourceParams.DestinationPath = SourceParams.DestinationPath.TrimEnd(System.IO.Path.DirectorySeparatorChar) + @"\";
 
             if (!sourceDirInfo.Exists)
-                throw new DirectoryNotFoundException("Source directory " + inParameters.SourcePath + " not found");
+                throw new DirectoryNotFoundException("Source directory " + SourceParams.SourcePath + " not found");
             if (!destDirInfo.Exists)
-                throw new DirectoryNotFoundException("Destination directory " + inParameters.DestinationPath + " not found");
-            if (string.IsNullOrEmpty(inParameters.FileMask))
+                throw new DirectoryNotFoundException("Destination directory " + SourceParams.DestinationPath + " not found");
+            if (string.IsNullOrEmpty(SourceParams.FileMask))
                 throw new ArgumentNullException("File mask cannot be null");
-            if (string.IsNullOrEmpty(inParameters.Filename))
+            if (string.IsNullOrEmpty(SourceParams.Filename))
                 throw new ArgumentNullException("Filename cannot be null");
 
-            var outputInfo = new ZipOutputInfo();
+            var outputInfo = new Output();
 
             using (ZipFile archive = new ZipFile())
             {
                 //Adds a password to the archive if provided.
                 //Password works only for files that are > 0 bytes
-                if (!string.IsNullOrWhiteSpace(inParameters.Password))
+                if (!string.IsNullOrWhiteSpace(SourceParams.Password))
                 {
-                    archive.Password = inParameters.Password;
+                    archive.Password = SourceParams.Password;
                 }
                 //Creates a flat file
-                if (inParameters.AddDirectories && inParameters.CreateFlatfile)
+                if (SourceParams.AddDirectories && SourceParams.CreateFlatfile)
                 {
-                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(inParameters.FileMask, SearchOption.AllDirectories))
+                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(SourceParams.FileMask, SearchOption.AllDirectories))
                     {
                         //If archive already contains a file with the same name
                         if (archive.ContainsEntry(fileInfo.Name))
@@ -152,34 +169,34 @@ namespace Frends.Community.Zip
                     }
                     //include subdirectories in the archive
                 }
-                else if (inParameters.AddDirectories && !inParameters.CreateFlatfile)
+                else if (SourceParams.AddDirectories && !SourceParams.CreateFlatfile)
                 {
-                    foreach (FileInfo fileInfo in sourceDirInfo.GetFiles(inParameters.FileMask, SearchOption.AllDirectories))
+                    foreach (FileInfo fileInfo in sourceDirInfo.GetFiles(SourceParams.FileMask, SearchOption.AllDirectories))
                     {
                         //a stupid way to get the relative path
-                        string relativePath = fileInfo.FullName.ToString().Replace(inParameters.SourcePath, string.Empty).Replace(fileInfo.Name, string.Empty);
+                        string relativePath = fileInfo.FullName.ToString().Replace(SourceParams.SourcePath, string.Empty).Replace(fileInfo.Name, string.Empty);
                         archive.AddFile(fileInfo.FullName, relativePath);
                     }
                 }
                 else
                 {   //top directory only
-                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(inParameters.FileMask, SearchOption.TopDirectoryOnly))
+                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(SourceParams.FileMask, SearchOption.TopDirectoryOnly))
                     {
                         archive.AddFile(fileInfo.FullName, "");
                     }
                 }
 
                 //if error flag is set
-                if (archive.Count <= 0 && inParameters.EmptyZipError)
+                if (archive.Count <= 0 && SourceParams.EmptyZipError)
                     throw new FileNotFoundException("No files found, check your source directory or file mask");
 
                 //creates archive only when there are actual files in it
                 if (archive.Count > 0)
                 {
                     outputInfo.Filecount = archive.Count;
-                    outputInfo.Filename = inParameters.Filename;
+                    outputInfo.Filename = SourceParams.Filename;
                     //adds a directory separator char
-                    archive.Save(inParameters.DestinationPath + inParameters.Filename);
+                    archive.Save(SourceParams.DestinationPath + SourceParams.Filename);
                 }
             }
             return outputInfo;
