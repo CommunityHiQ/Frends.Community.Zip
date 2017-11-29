@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip", "Frends.Community.Zip.csproj", "{BD060DC4-19A9-4904-82C6-F0E01D89F97E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip", "Frends.Community.Zip\Frends.Community.Zip.csproj", "{BD060DC4-19A9-4904-82C6-F0E01D89F97E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip.Tests", "..\Frends.Community.Zip.Tests\Frends.Community.Zip.Tests.csproj", "{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip.Tests", "Frends.Community.Zip.Tests\Frends.Community.Zip.Tests.csproj", "{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD4D4AA3-65CD-43F1-95DD-0DB1219585E3}"
+	ProjectSection(SolutionItems) = preProject
+		nuspec\Frends.Community.Zip.nuspec = nuspec\Frends.Community.Zip.nuspec
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {814AF32F-8EAC-4164-BAEA-34835C15436E}
 	EndGlobalSection
 EndGlobal

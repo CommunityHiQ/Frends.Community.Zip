@@ -1,151 +1,208 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-//using FRENDS.Common.Files;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Text;
 using Frends.Community.Zip;
+using System.Threading;
+using System.Linq;
 
-namespace FRENDS.Community.Tests
+namespace FRENDS.Community.Zip.Tests
 {
     [TestFixture]
     public class ZipTests
     {
-        private static readonly string _basePath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDi‌​rectory, "..\\..\\"));
+        private static readonly string _basePath = Path.Combine(Path.GetTempPath(), "frends.community.zip.tests");
 
-        private readonly string _dirIn = Path.Combine(_basePath, @"TestFiles\In\");
-        private readonly string _dirOut = Path.Combine(_basePath, @"TestFiles\Out\");
+        private readonly string _dirIn = Path.Combine(_basePath, @"In\");
+        private readonly string _subDir = "Subdir";
+        private string _subDirIn;
+        private readonly string _dirOut = Path.Combine(_basePath, @"Out\");
+        private readonly string _zipFileName = "zip_test.zip";
+
+        private SourceProperties _source;
+        private DestinationFileProperties _destination;
+        private DestinationOptions _destinationOptions;
+        private DestinationProperties _destinationProperties;
+        private Options _options;
         
         [TearDown]
         public void TearDown()
         {
-            DelIfExists(Path.Combine(_dirOut, "testi.zip"));
-            DelIfExists(Path.Combine(_dirOut, "XmlTest1.xml"));
-            DelIfExists(Path.Combine(_dirOut, "XmlTest2.xml"));
-            DelIfExists(Path.Combine(_dirOut, "testi_w_password.zip"));
-            DelIfExists(Path.Combine(_dirOut, "testi_recursive.zip"));
-            DelIfExists(Path.Combine(_dirOut, @"recursivetest/XmlTest1.xml"));
-            DelIfExists(Path.Combine(_dirOut, @"recursivetest/XmlTest2.xml"));
-            DelIfExists(Path.Combine(_dirOut, "testi_flatfile.zip"));
-            DelIfExists(Path.Combine(_dirOut, "testi_empty.zip"));
+            // remove test directories and files
+            Directory.Delete(_basePath, true);
+        }
 
+        [SetUp]
+        public void SetupTests()
+        {
+            _subDirIn = Path.Combine(_dirIn, _subDir);
+            _source = new SourceProperties { Path = _dirIn, FileMask = "*.txt", IncludeSubFolders = false };
+            _destination = new DestinationFileProperties { Path = _dirOut, FileName = _zipFileName, CreateDestinationFolder = false };
+            _destinationOptions = new DestinationOptions { FlattenFolders = false, Password = "", RenameDublicateFiles = false };
+            _destinationProperties = new DestinationProperties { Destination = _destination, Options = _destinationOptions };
+            _options = new Options { ThrowErrorIfNoFilesFound = true };
+
+            // create source directoty and files
+            Directory.CreateDirectory(_dirIn);
+            File.WriteAllText(Path.Combine(_dirIn, "test_1_file.txt"), "foobaar foobar");
+            File.WriteAllText(Path.Combine(_dirIn, "test_2_file.txt"), "foobaar foobar");
+            // create sub dir for recursive test
+            Directory.CreateDirectory(_subDirIn);
+            File.WriteAllText(Path.Combine(_subDirIn, "sub_test_1_file.txt"), "foobaar foobar");
+            File.WriteAllText(Path.Combine(_subDirIn, "sub_test_2_file.txt"), "foobaar foobar");
+
+            Directory.CreateDirectory(_dirOut);
+        }
+
+        private Output ExecuteCreateArchive()
+        {
+            return Frends.Community.Zip.Zip.CreateArchive(_source, _destinationProperties, _options, CancellationToken.None);
+        }
+
+        [Test]
+        public void ZipFiles_NonRecursive()
+        {
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(2, result.FileCount);
+            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+        }
+
+        [Test]
+        public void ZipFiles_Fails_If_SourcePathDoesNotExist()
+        {
+            _source.Path = Path.Combine(_dirIn, "foobar");
+
+            var result = Assert.Throws<DirectoryNotFoundException>(() => ExecuteCreateArchive());
+
+            Assert.IsTrue(result.Message.Contains("Source directory"));
+            Assert.IsTrue(result.Message.Contains("does not exist."));
+        }
+
+        [Test]
+        public void Zipfiles_DoesNotFail_IfSourceFilesAreNotFound()
+        {
+            _source.FileMask = "foobar.txt";
+            _options.ThrowErrorIfNoFilesFound = false;
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(0, result.FileCount);
+            Assert.That(!File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+        }
+
+        [Test]
+        public void ZipFiles_Fails_IfNoSourceFilesFound()
+        {
+            _source.FileMask = "foobar.txt";
+            var result = Assert.Throws<FileNotFoundException>(() => ExecuteCreateArchive());
+        }
+
+        [Test]
+        public void ZipFiles_Fails_If_DestinationPathDoesNotExist()
+        {
+            _destination.Path = Path.Combine(_destination.Path, "foobar");
+
+            var result = Assert.Throws<DirectoryNotFoundException>(() => ExecuteCreateArchive());
+
+            Assert.IsTrue(result.Message.Contains("Destination directory"));
+            Assert.IsTrue(result.Message.Contains("does not exist."));
+        }
+
+        [Test]
+        public void ZipFiles_NonRecursive_And_CreateDestinationDirectory()
+        {
+            _destination.CreateDestinationFolder = true;
+            _destination.Path = Path.Combine(_dirOut, "newDir");
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(2, result.FileCount);
+            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
         }
         
-        private static void DelIfExists(string p)
+
+        [Test]
+        public void ZipFiles_Recursive()
         {
-            if (File.Exists(p))
-            {
-                File.Delete(p);
-            }
+            _source.IncludeSubFolders = true;
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(4, result.FileCount);
+            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            var fileNamesWithSubDir = result.FileNames.Where(s => s.Contains(_subDir)).Count();
+            Assert.AreEqual(2, fileNamesWithSubDir);
         }
 
         [Test]
-        public void ZipFiles()
+        public void ZipFiles_FlattenFolders()
         {
-            //non-recursive test
-            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi.zip");
-            Zip.Output output = Zip.CreateArchive(input);
-            StringAssert.AreEqualIgnoringCase("testi.zip", output.Filename);
-            Assert.AreEqual(2, output.Filecount);
-            Assert.That(File.Exists(_dirOut + "testi.zip"));
+            _source.IncludeSubFolders = true;
+            _destinationOptions.FlattenFolders = true;
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(4, result.FileCount);
+            var subDirIsPresent = result.FileNames.Where(s => s.Contains(_subDir)).Count() > 0;
+            Assert.IsFalse(subDirIsPresent);
         }
 
         [Test]
-        public void ZipFiles_recursive_test()
+        public void ZipFiles_FlattenFolders_Fails_IfDublicateFileNames_And_RenameFalse()
         {
-            //Scan subdirectories
-            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_recursive.zip", true);
-            Zip.Output output = Zip.CreateArchive(input);
-            Assert.AreEqual(4, output.Filecount);
-            Assert.That(File.Exists(_dirOut + "testi_recursive.zip"));
+            var dublicateFileName = "dublicate_file.txt";
+            // create files with dublicate names in separate folders
+            File.WriteAllText(Path.Combine(_dirIn, dublicateFileName), "Seaman: Swallow, come!");
+            File.WriteAllText(Path.Combine(_subDirIn, dublicateFileName), "Seaman: Swallow, come!");
+
+            _source.IncludeSubFolders = true;
+            _destinationOptions.FlattenFolders = true;
+
+            var result = Assert.Throws<Exception>(() => ExecuteCreateArchive());
+            Assert.IsTrue(result.Message.Contains("already exists in zip!"));
         }
 
         [Test]
-        public void ZipFiles_create_flatfile()
+        public void ZipFiles_Flattenfolders_RenamesDublicateFiles()
         {
-            //creates a flat file 
-            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_flatfile.zip", true, true);
-            Zip.Output output = Zip.CreateArchive(input);
-            Assert.AreEqual(4, output.Filecount);
-            Assert.That(File.Exists(_dirOut + "testi_flatfile.zip"));
+            var dublicateFileName = "dublicate_file.txt";
+            // create files with dublicate names in separate folders
+            File.WriteAllText(Path.Combine(_dirIn, dublicateFileName), "Seaman: Swallow, come!");
+            File.WriteAllText(Path.Combine(_subDirIn, dublicateFileName), "Seaman: Swallow, come!");
+            var subDir2 = Path.Combine(_subDirIn, "subdir2");
+            Directory.CreateDirectory(subDir2);
+            File.WriteAllText(Path.Combine(subDir2, dublicateFileName), "Seaman: Swallow, come!");
 
+            _source.IncludeSubFolders = true;
+            _destinationOptions.FlattenFolders = true;
+            _destinationOptions.RenameDublicateFiles = true;
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(7, result.FileCount);
+            var subDirCount = result.FileNames.Where(s => s.Contains(_subDir)).Count();
+            Assert.AreEqual(0, subDirCount);
+            Assert.Contains("dublicate_file.txt", result.FileNames);
+            Assert.Contains("dublicate_file_(1).txt", result.FileNames);
+            Assert.Contains("dublicate_file_(2).txt", result.FileNames);
         }
+
+        //TODO: Open zip protected with password
         [Test]
-        public void ZipFiles_empty_zip_error()
+        [Ignore("This does not actully test the password, yet!")]
+        public void ZipFiles_WithPassword_NeedsPasword_For_Extraction()
         {
-            //trying to create an empty archive
-            try
-            {
-                Zip.Source input = this.InputHelperZip(_dirIn, _dirOut, "*.abc", "testi_empty.zip", true, true,true);
-                Zip.Output output = Zip.CreateArchive(input);
-            }
-            catch(Exception e)
-            {
-            }
-            Assert.That(!File.Exists(_dirOut + "testi_empty.zip"));
-        }
+            _destinationOptions.Password = "password";
+            var result = ExecuteCreateArchive();
 
-        [Test]
-        public void ZipFiles_destination_path_Fail()
-        {
-            // Try to use a non-existing directory as a destination
-            try
-            {
-                Zip.Source input = InputHelperZip(_dirIn, _dirOut + @"/testi6/", "*.xml", "testi.zip");
-                Zip.Output output = Zip.CreateArchive(input);
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-            }
-
-            Assert.That(!File.Exists(_dirOut + "testi.zip"));
-        }
-
-        [Test]
-        public void ZipFiles_source_path_Fail()
-        {
-            // Try to use a non-existing directory as a source
-            try
-            {
-                Zip.Source input = InputHelperZip(_dirIn + @"/testi6/", _dirOut, "*.xml", "testi.zip");
-                Zip.Output output = Zip.CreateArchive(input);
-            }
-            catch (DirectoryNotFoundException ex)
-            {
-            }
-
-            Assert.That(!File.Exists(_dirOut + "testi.zip"));
-        }
-
-
-        [Test]
-        public void ZipFiles_WithPassword()
-        {
-            //create an archive using a password
-            Zip.Source input = InputHelperZip(_dirIn, _dirOut, "*.xml", "testi_w_password.zip", false, false, false, "SalaKala3");
-            Zip.Output output = Zip.CreateArchive(input);
-
-            StringAssert.AreEqualIgnoringCase("testi_w_password.zip", output.Filename);
-            Assert.That(File.Exists(_dirOut + "testi_w_password.zip"));
-        }
-
-        //helper methods for Zip_v3 tests
-        private Zip.Source InputHelperZip(String source, String destination, string mask, string filename, Boolean recursive = false, Boolean flat = false, Boolean error = true, string password = null)
-        {
-            Zip.Source input = new Zip.Source()
-            {
-                SourcePath = source,
-                DestinationPath = destination,
-                FileMask = mask,
-                Filename = filename,
-                ///optional parameters
-                AddDirectories = recursive,
-                CreateFlatfile = flat,
-                EmptyZipError = error,
-                Password = password
-            };
-            return input;
+            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(2, result.FileCount);
+            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
         }
     }
 }

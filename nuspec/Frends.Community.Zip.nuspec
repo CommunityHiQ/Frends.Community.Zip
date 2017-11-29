@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>Frends.Community.Zip</id>
-    <version>1.0.0.0</version>
+    <version>1.0.0</version>
     <title>FRENDS file management task: Zip v3</title>
     <authors>HiQ Finland</authors>
     <owners />
@@ -10,8 +10,8 @@
     <description>Zip support for Frends</description>
     <summary />
     <dependencies>
-      <dependency id="Newtonsoft.Json" version="6.0.8" />
-	  <dependency id="DotNetZip" version="1.10.1.0" />
+	    <dependency id="DotNetZip" version="1.10.1.0" />
+      <dependency id="Frends.Tasks.Attributes" version="1.2.1" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.CSharp" />
@@ -27,7 +27,8 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="bin\release\FRENDS.Common.Zip_v3.dll" target="lib\net451\FRENDS.Common.Zip_v3.dll" />
+    <file src="..\FRENDS.Community.Zip\bin\release\FRENDS.Common.Zip.dll" target="lib\net451\FRENDS.Community.Zip.dll" />
+    <file src="..\FRENDS.Community.Zip\bin\release\FRENDS.Common.Zip.xml" target="lib\net451\FRENDS.Community.Zip.xml" />
   </files>
 </package>
 

@@ -1,210 +1,102 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using Ionic.Zip;
-using System.ComponentModel;
+using Frends.Tasks.Attributes;
+using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
+
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace Frends.Community.Zip
 {
-    /// <summary>
-    /// A FRENDS task for creating and extracting zip archives v3
-    /// </summary>
     public class Zip
     {
-        /// <summary>
-        /// Zip input parameters class
-        /// </summary>
-        public class Source
+        public static Output CreateArchive([CustomDisplay(DisplayOption.Tab)]SourceProperties sourceProperties, 
+            [CustomDisplay(DisplayOption.Tab)]DestinationProperties destinationProperties, 
+            [CustomDisplay(DisplayOption.Tab)]Options options,
+            CancellationToken cancellationToken)
         {
-            /// <summary>
-            /// Source path
-            /// </summary>
-            [DisplayName("Source path")]
-            [DefaultValue("\"\\\"")]
-            public string SourcePath { get; set; }
+            var destination = destinationProperties.Destination;
+            var destinationOptions = destinationProperties.Options;
 
-            [DisplayName("File mask")]
-            [DefaultValue("\"*\"")]
-            public string FileMask { get; set; }
-        }
+            // validate that source and destination folders exist
+            if (!Directory.Exists(sourceProperties.Path))
+                throw new DirectoryNotFoundException($"Source directory {sourceProperties.Path} does not exist.");
+            if (!Directory.Exists(destination.Path) && !destination.CreateDestinationFolder)
+                throw new DirectoryNotFoundException($"Destination directory {destination.Path} does not exist.");
 
-        /// <summary>
-        /// The destination parameters of the class inputs
-        /// </summary>
-        public class Destination
-        {
-            /// <summary>
-            /// Filename of the zip to create
-            /// </summary>
-            [DisplayName("Filename")]
-            [DefaultValue("\"\"")]
-            public string Filename { get; set; }
+            var sourceFiles = Directory.EnumerateFiles(sourceProperties.Path, sourceProperties.FileMask, sourceProperties.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-            /// <summary>
-            /// Destination path
-            /// </summary>
-            [DisplayName("Destination path")]
-            [DefaultValue("\"\\\"")]
-            public string DestinationPath { get; set; }
-            /// <summary>
-            /// Filemask
-            /// </summary>
-        }
+            // If no files were found, throw error or return empty Output object
+            if (sourceFiles.Count() == 0) {
+                if (options.ThrowErrorIfNoFilesFound)
+                    throw new FileNotFoundException($"No files found in {sourceProperties.Path} with file mask '{sourceProperties.FileMask}'");
+                else
+                    return new Output { FileCount = 0 };
+            }
 
-        public class Options
-        {
-            /// <summary>
-            /// Recursive scan
-            /// </summary>
-            [DisplayName("Add directories ?")]
-            [DefaultValue(true)]
-            public bool AddDirectories { get; set; }
-
-            /// <summary>
-            /// Create a flat file archive
-            /// </summary>
-            [DisplayName("Create a flat archive ?")]
-            [DefaultValue(false)]
-            public bool CreateFlatfile { get; set; }
-
-            /// <summary>
-            /// Adds a password to archive
-            /// </summary>
-            [PasswordPropertyText]
-            public string Password { get; set; }
-
-            /// <summary>
-            /// If set to true, will throw an error
-            /// when task tries to create an empty archive
-            /// </summary>
-            [DisplayName("Throw error when zip is empty")]
-            [DefaultValue(true)]
-            public bool EmptyZipError { get; set; }
-        }
-
-        /// <summary>
-        /// zip output info class
-        /// </summary>
-        public class Output
-        {
-            /// <summary>
-            /// Filename
-            /// </summary>
-            public string Filename { get; set; }
-            /// <summary>
-            /// Filecount
-            /// </summary>
-            [DefaultValue(0)]
-            public Int32 Filecount { get; set; }
-        }
-        /// <summary>
-        /// A FRENDS task for creating zip-archives. 
-        /// </summary>
-        /// <param name="SourceParams">ZipInputParameters-object</param>
-        /// <returns>ZipOutputInfo-object</returns>
-        public static Output CreateArchive(Source SourceParams, Destination DestinationParams, Options OptionParams)
-        {
-            DirectoryInfo sourceDirInfo = new DirectoryInfo(SourceParams.SourcePath);
-            DirectoryInfo destDirInfo = new DirectoryInfo(DestinationParams.DestinationPath);
-
-            //adds a directory separator char
-            SourceParams.DestinationPath = SourceParams.DestinationPath.TrimEnd(System.IO.Path.DirectorySeparatorChar) + @"\";
-
-            if (!sourceDirInfo.Exists)
-                throw new DirectoryNotFoundException("Source directory " + SourceParams.SourcePath + " not found");
-            if (!destDirInfo.Exists)
-                throw new DirectoryNotFoundException("Destination directory " + SourceParams.DestinationPath + " not found");
-            if (string.IsNullOrEmpty(SourceParams.FileMask))
-                throw new ArgumentNullException("File mask cannot be null");
-            if (string.IsNullOrEmpty(SourceParams.Filename))
-                throw new ArgumentNullException("Filename cannot be null");
-
-            var outputInfo = new Output();
-
-            using (ZipFile archive = new ZipFile())
+            using (var zipFile = new ZipFile())
             {
-                //Adds a password to the archive if provided.
-                //Password works only for files that are > 0 bytes
-                if (!string.IsNullOrWhiteSpace(SourceParams.Password))
-                {
-                    archive.Password = SourceParams.Password;
-                }
-                //Creates a flat file
-                if (SourceParams.AddDirectories && SourceParams.CreateFlatfile)
-                {
-                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(SourceParams.FileMask, SearchOption.AllDirectories))
-                    {
-                        //If archive already contains a file with the same name
-                        if (archive.ContainsEntry(fileInfo.Name))
-                        {
-                            using (FileStream fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read))
-                            {
-                                //to get around the ionic-zip <filename, filepath>-dictionary limitation (you can't have two files with the same name)
-                                byte[] bt = new byte[fs.Length];
-                                fs.Read(bt, 0, (int)fs.Length);
-                                MemoryStream ms = new MemoryStream(bt, writable: false);
-                                string new_filename;
+                //if password is given add it to archive
+                if (!string.IsNullOrWhiteSpace(destinationOptions.Password))
+                    zipFile.Password = destinationOptions.Password;
 
-                                //if file doesn't have a file extension
-                                if (String.IsNullOrEmpty(fileInfo.Extension))
-                                {                                       //creates an unique filename: filename + timestamp
-                                    new_filename = fileInfo.Name + $"({GetTimestamp(DateTime.Now)})";
-                                }
-                                else
-                                {
-                                    //if file has a file extension
-                                    new_filename = fileInfo.Name.Replace(fileInfo.Extension, String.Empty) +
-                                        $"({GetTimestamp(DateTime.Now)}){fileInfo.Extension}";
-                                }
-                                archive.AddEntry(new_filename, ms);
-                            }
+
+                foreach(var fullPath in Directory.EnumerateFiles(
+                    sourceProperties.Path, sourceProperties.FileMask, 
+                    sourceProperties.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                {
+                    // Add all files to zip root
+                    if (destinationOptions.FlattenFolders)
+                    {
+                        //check is file with same name alredy added
+                        if (zipFile.ContainsEntry(Path.GetFileName(fullPath)))
+                        {
+                            if (destinationOptions.RenameDublicateFiles)
+                                RenameAndAddFile(zipFile, fullPath);
+                            else
+                                throw new Exception($"File {fullPath} already exists in zip!");
                         }
                         else
-                        {
-                            archive.AddFile(fileInfo.FullName, "");
-                        }
+                            zipFile.AddFile(fullPath, "");
                     }
-                    //include subdirectories in the archive
-                }
-                else if (SourceParams.AddDirectories && !SourceParams.CreateFlatfile)
-                {
-                    foreach (FileInfo fileInfo in sourceDirInfo.GetFiles(SourceParams.FileMask, SearchOption.AllDirectories))
+                    else
                     {
-                        //a stupid way to get the relative path
-                        string relativePath = fileInfo.FullName.ToString().Replace(SourceParams.SourcePath, string.Empty).Replace(fileInfo.Name, string.Empty);
-                        archive.AddFile(fileInfo.FullName, relativePath);
-                    }
-                }
-                else
-                {   //top directory only
-                    foreach (FileInfo fileInfo in sourceDirInfo.EnumerateFiles(SourceParams.FileMask, SearchOption.TopDirectoryOnly))
-                    {
-                        archive.AddFile(fileInfo.FullName, "");
+                        // get relative path to file
+                        var relativePath = Path.GetDirectoryName(fullPath).Replace(Path.GetDirectoryName(sourceProperties.Path), string.Empty);
+                        zipFile.AddFile(fullPath, relativePath);
                     }
                 }
 
-                //if error flag is set
-                if (archive.Count <= 0 && SourceParams.EmptyZipError)
-                    throw new FileNotFoundException("No files found, check your source directory or file mask");
+                // check does destination directory exist and if it should be created
+                if (destination.CreateDestinationFolder && !Directory.Exists(destination.Path))
+                    Directory.CreateDirectory(destination.Path);
 
-                //creates archive only when there are actual files in it
-                if (archive.Count > 0)
-                {
-                    outputInfo.Filecount = archive.Count;
-                    outputInfo.Filename = SourceParams.Filename;
-                    //adds a directory separator char
-                    archive.Save(SourceParams.DestinationPath + SourceParams.Filename);
-                }
+                // save zip
+                zipFile.Save(Path.Combine(destination.Path, destination.FileName));
+
+                return new Output { Name = destination.FileName, Path = destination.Path, FileCount = zipFile.Count, FileNames = zipFile.EntryFileNames.ToList() };
             }
-            return outputInfo;
-        }     
-        //helper-method for creating a "timestamp"
-        private static String GetTimestamp(DateTime value)
+        }
+
+        private static void RenameAndAddFile(ZipFile zipFile, string filePath)
         {
-            return value.ToString("yyyyMMddHHmmssffff");
+            var renamedFileName = GetRenamedFileName(zipFile.EntryFileNames, Path.GetFileName(filePath));
+            zipFile.AddEntry(renamedFileName, File.ReadAllBytes(filePath));
+        }
+
+        private static string GetRenamedFileName(ICollection<string> entryFileNames, string fileName)
+        {
+            var index = 1;
+            var renamedFile = fileName.RenameFile(index);
+            while (entryFileNames.Contains(renamedFile))
+            {
+                index++;
+                renamedFile = fileName.RenameFile(index);
+            }
+
+            return renamedFile;
         }
     }
 }
