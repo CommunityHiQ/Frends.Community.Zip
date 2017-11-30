@@ -3,15 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 
 namespace Frends.Community.Zip
 {
+    public enum FileExistAction { Error, Overwrite, Rename};
+
+    [DisplayName("Source")]
     public class SourceProperties
     {
         /// <summary>
         /// Source path
         /// </summary>
+        [DefaultValue(@"C:\example\folder\")]
+        [DefaultDisplayType(DisplayType.Text)]
         public string Path { get; set; }
 
         /// <summary>
@@ -20,6 +25,7 @@ namespace Frends.Community.Zip
         /// The default pattern is "*", which returns all files.
         /// </summary>
         [DefaultValue("*")]
+        [DefaultDisplayType(DisplayType.Text)]
         public string FileMask { get; set; }
 
         /// <summary>
@@ -29,27 +35,31 @@ namespace Frends.Community.Zip
         public bool IncludeSubFolders { get; set; }
     }
 
-    public class DestinationFileProperties
+    [DisplayName("Destination")]
+    public class DestinationProperties
     {
-        /// <summary>
-        /// Filename of the zip to create
-        /// </summary>
-        public string FileName { get; set; }
-
         /// <summary>
         /// Destination path
         /// </summary>
         public string Path { get; set; }
 
         /// <summary>
+        /// Filename of the zip to create
+        /// </summary>
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// Add password protection to zip
+        /// </summary>
+        [PasswordPropertyText]
+        public string Password { get; set; }
+
+        /// <summary>
         /// Create destination folder if it does not exist
         /// </summary>
         [DefaultValue(false)]
         public bool CreateDestinationFolder { get; set; }
-    }
 
-    public class DestinationOptions
-    {
         /// <summary>
         /// Choose if source folder structure should be flatten.
         /// </summary>
@@ -57,24 +67,13 @@ namespace Frends.Community.Zip
         public bool FlattenFolders { get; set; }
 
         /// <summary>
-        /// True: If source files contains dublicate names, they are renamed (dublicate.txt --> dublicate_(1).txt)
+        /// True: If source files contains dublicate names, they are renamed (example.txt --&gt; example_(1).txt)
         /// False: Throws error if dublicate file names are found
         /// </summary>
         [ConditionalDisplay(nameof(FlattenFolders), true)]
         [DefaultValue(false)]
         public bool RenameDublicateFiles { get; set; }
 
-        /// <summary>
-        /// Add password protection to zip
-        /// </summary>
-        [PasswordPropertyText]
-        public string Password { get; set; }
-    }
-
-    public class DestinationProperties
-    {
-        public DestinationFileProperties Destination { get; set; }
-        public DestinationOptions Options { get; set; }
     }
 
     public class Options
@@ -84,6 +83,15 @@ namespace Frends.Community.Zip
         /// </summary>
         [DefaultValue(true)]
         public bool ThrowErrorIfNoFilesFound { get; set; }
+
+        /// <summary>
+        /// Choose action if destination zip file already exists
+        /// Error: throws error
+        /// Overwrite: Overwrites existing zip file with new one
+        /// Rename: Renames new zip file (example.zip --&gt; example_(1).zip)
+        /// </summary>
+        [DefaultValue(FileExistAction.Error)]
+        public FileExistAction DestinationFileExistsAction { get; set; }
     }
 
     public class Output
@@ -91,12 +99,12 @@ namespace Frends.Community.Zip
         /// <summary>
         /// Filename of zip created
         /// </summary>
-        public string Name { get; set; }
+        public string FileName { get; set; }
 
         /// <summary>
         /// Path to zip created
         /// </summary>
-        public string Path { get; set; }
+        public string FilePath { get; set; }
 
         /// <summary>
         /// Number of files in creted zip file
@@ -106,6 +114,6 @@ namespace Frends.Community.Zip
         /// <summary>
         /// List of files zipped
         /// </summary>
-        public List<string> FileNames { get; set; }
+        public List<string> ArchivedFiles { get; set; }
     }
 }

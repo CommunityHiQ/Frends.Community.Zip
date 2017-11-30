@@ -61,14 +61,7 @@
       <Name>Frends.Community.Zip</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestFiles\In\XmlTest1.xml" />
-    <Content Include="TestFiles\In\XmlTest2.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestFiles\In\recursivetest\" />
-    <Folder Include="TestFiles\Out\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

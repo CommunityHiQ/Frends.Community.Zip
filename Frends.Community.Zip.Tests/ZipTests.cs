@@ -19,9 +19,7 @@ namespace FRENDS.Community.Zip.Tests
         private readonly string _zipFileName = "zip_test.zip";
 
         private SourceProperties _source;
-        private DestinationFileProperties _destination;
-        private DestinationOptions _destinationOptions;
-        private DestinationProperties _destinationProperties;
+        private DestinationProperties _destination;
         private Options _options;
         
         [TearDown]
@@ -36,9 +34,15 @@ namespace FRENDS.Community.Zip.Tests
         {
             _subDirIn = Path.Combine(_dirIn, _subDir);
             _source = new SourceProperties { Path = _dirIn, FileMask = "*.txt", IncludeSubFolders = false };
-            _destination = new DestinationFileProperties { Path = _dirOut, FileName = _zipFileName, CreateDestinationFolder = false };
-            _destinationOptions = new DestinationOptions { FlattenFolders = false, Password = "", RenameDublicateFiles = false };
-            _destinationProperties = new DestinationProperties { Destination = _destination, Options = _destinationOptions };
+            _destination = new DestinationProperties
+            {
+                Path = _dirOut,
+                FileName = _zipFileName,
+                CreateDestinationFolder = false,
+                FlattenFolders = false,
+                Password = "",
+                RenameDublicateFiles = false
+            };
             _options = new Options { ThrowErrorIfNoFilesFound = true };
 
             // create source directoty and files
@@ -55,7 +59,7 @@ namespace FRENDS.Community.Zip.Tests
 
         private Output ExecuteCreateArchive()
         {
-            return Frends.Community.Zip.Zip.CreateArchive(_source, _destinationProperties, _options, CancellationToken.None);
+            return Frends.Community.Zip.Zip.CreateArchive(_source, _destination, _options, CancellationToken.None);
         }
 
         [Test]
@@ -63,7 +67,7 @@ namespace FRENDS.Community.Zip.Tests
         {
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(2, result.FileCount);
             Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
         }
@@ -117,7 +121,7 @@ namespace FRENDS.Community.Zip.Tests
 
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(2, result.FileCount);
             Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
         }
@@ -130,10 +134,10 @@ namespace FRENDS.Community.Zip.Tests
 
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(4, result.FileCount);
             Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
-            var fileNamesWithSubDir = result.FileNames.Where(s => s.Contains(_subDir)).Count();
+            var fileNamesWithSubDir = result.ArchivedFiles.Where(s => s.Contains(_subDir)).Count();
             Assert.AreEqual(2, fileNamesWithSubDir);
         }
 
@@ -141,13 +145,13 @@ namespace FRENDS.Community.Zip.Tests
         public void ZipFiles_FlattenFolders()
         {
             _source.IncludeSubFolders = true;
-            _destinationOptions.FlattenFolders = true;
+            _destination.FlattenFolders = true;
 
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(4, result.FileCount);
-            var subDirIsPresent = result.FileNames.Where(s => s.Contains(_subDir)).Count() > 0;
+            var subDirIsPresent = result.ArchivedFiles.Where(s => s.Contains(_subDir)).Count() > 0;
             Assert.IsFalse(subDirIsPresent);
         }
 
@@ -160,7 +164,7 @@ namespace FRENDS.Community.Zip.Tests
             File.WriteAllText(Path.Combine(_subDirIn, dublicateFileName), "Seaman: Swallow, come!");
 
             _source.IncludeSubFolders = true;
-            _destinationOptions.FlattenFolders = true;
+            _destination.FlattenFolders = true;
 
             var result = Assert.Throws<Exception>(() => ExecuteCreateArchive());
             Assert.IsTrue(result.Message.Contains("already exists in zip!"));
@@ -178,18 +182,57 @@ namespace FRENDS.Community.Zip.Tests
             File.WriteAllText(Path.Combine(subDir2, dublicateFileName), "Seaman: Swallow, come!");
 
             _source.IncludeSubFolders = true;
-            _destinationOptions.FlattenFolders = true;
-            _destinationOptions.RenameDublicateFiles = true;
+            _destination.FlattenFolders = true;
+            _destination.RenameDublicateFiles = true;
 
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(7, result.FileCount);
-            var subDirCount = result.FileNames.Where(s => s.Contains(_subDir)).Count();
+            var subDirCount = result.ArchivedFiles.Where(s => s.Contains(_subDir)).Count();
             Assert.AreEqual(0, subDirCount);
-            Assert.Contains("dublicate_file.txt", result.FileNames);
-            Assert.Contains("dublicate_file_(1).txt", result.FileNames);
-            Assert.Contains("dublicate_file_(2).txt", result.FileNames);
+            Assert.Contains("dublicate_file.txt", result.ArchivedFiles);
+            Assert.Contains("dublicate_file_(1).txt", result.ArchivedFiles);
+            Assert.Contains("dublicate_file_(2).txt", result.ArchivedFiles);
+        }
+
+        [Test]
+        public void ZipFile_Exists_ThrowsError()
+        {
+            _options.DestinationFileExistsAction = FileExistAction.Error;
+
+            ExecuteCreateArchive();
+            var result = Assert.Throws<Exception>(() => ExecuteCreateArchive());
+
+            Assert.IsTrue(result.Message.Equals($"Destination file {Path.Combine(_destination.Path, _destination.FileName)} already exists."));
+        }
+
+        [Test]
+        public void ZipFile_Exists_OverwriteFile()
+        {
+            _options.DestinationFileExistsAction = FileExistAction.Overwrite;
+
+            ExecuteCreateArchive();
+            ExecuteCreateArchive();
+
+            Assert.AreEqual(1, Directory.GetFiles(_destination.Path, "*.zip").Count());
+        }
+
+        [Test]
+        public void ZipFile_Exists_Rename()
+        {
+            _options.DestinationFileExistsAction = FileExistAction.Rename;
+
+            var result1 = ExecuteCreateArchive();
+            var result2 = ExecuteCreateArchive();
+            var result3 = ExecuteCreateArchive();
+
+            var zipFiles = Directory.GetFiles(_destination.Path, "*.zip");
+
+            Assert.AreEqual(3, zipFiles.Count());
+            Assert.AreEqual("zip_test.zip", result1.FileName);
+            Assert.AreEqual("zip_test_(1).zip", result2.FileName);
+            Assert.AreEqual("zip_test_(2).zip", result3.FileName);
         }
 
         //TODO: Open zip protected with password
@@ -197,10 +240,10 @@ namespace FRENDS.Community.Zip.Tests
         [Ignore("This does not actully test the password, yet!")]
         public void ZipFiles_WithPassword_NeedsPasword_For_Extraction()
         {
-            _destinationOptions.Password = "password";
+            _destination.Password = "password";
             var result = ExecuteCreateArchive();
 
-            Assert.AreEqual(_zipFileName, result.Name);
+            Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(2, result.FileCount);
             Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
         }
