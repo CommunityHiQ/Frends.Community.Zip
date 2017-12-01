@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Frends.Community.Zip;
 using System.Threading;
 using System.Linq;
+using Ionic.Zip;
 
 namespace FRENDS.Community.Zip.Tests
 {
@@ -38,12 +39,11 @@ namespace FRENDS.Community.Zip.Tests
             {
                 Path = _dirOut,
                 FileName = _zipFileName,
-                CreateDestinationFolder = false,
                 FlattenFolders = false,
                 Password = "",
                 RenameDublicateFiles = false
             };
-            _options = new Options { ThrowErrorIfNoFilesFound = true };
+            _options = new Options { ThrowErrorIfNoFilesFound = true, CreateDestinationFolder = false, DestinationFileExistsAction = FileExistAction.Error };
 
             // create source directoty and files
             Directory.CreateDirectory(_dirIn);
@@ -116,7 +116,7 @@ namespace FRENDS.Community.Zip.Tests
         [Test]
         public void ZipFiles_NonRecursive_And_CreateDestinationDirectory()
         {
-            _destination.CreateDestinationFolder = true;
+            _options.CreateDestinationFolder = true;
             _destination.Path = Path.Combine(_dirOut, "newDir");
 
             var result = ExecuteCreateArchive();
@@ -235,17 +235,25 @@ namespace FRENDS.Community.Zip.Tests
             Assert.AreEqual("zip_test_(2).zip", result3.FileName);
         }
 
-        //TODO: Open zip protected with password
         [Test]
-        [Ignore("This does not actully test the password, yet!")]
         public void ZipFiles_WithPassword_NeedsPasword_For_Extraction()
         {
             _destination.Password = "password";
             var result = ExecuteCreateArchive();
+            var zipFileName = Path.Combine(result.FilePath, result.FileName);
+            var extractPath = Path.Combine(_dirOut, "extracted");
+
+            using(var zip = ZipFile.Read(zipFileName))
+            {
+                Assert.Throws<BadPasswordException>(() => zip.ExtractAll(extractPath));
+
+                zip.Password = _destination.Password;
+                zip.ExtractAll(extractPath);
+            }
 
             Assert.AreEqual(_zipFileName, result.FileName);
-            Assert.AreEqual(2, result.FileCount);
-            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            Assert.IsTrue(Directory.Exists(extractPath));
+            Assert.AreEqual(result.FileCount, Directory.GetFiles(extractPath, "*").Count());
         }
     }
 }

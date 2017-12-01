@@ -54,11 +54,6 @@ namespace Frends.Community.Zip
         [PasswordPropertyText]
         public string Password { get; set; }
 
-        /// <summary>
-        /// Create destination folder if it does not exist
-        /// </summary>
-        [DefaultValue(false)]
-        public bool CreateDestinationFolder { get; set; }
 
         /// <summary>
         /// Choose if source folder structure should be flatten.
@@ -92,6 +87,12 @@ namespace Frends.Community.Zip
         /// </summary>
         [DefaultValue(FileExistAction.Error)]
         public FileExistAction DestinationFileExistsAction { get; set; }
+
+        /// <summary>
+        /// Create destination folder if it does not exist
+        /// </summary>
+        [DefaultValue(false)]
+        public bool CreateDestinationFolder { get; set; }
     }
 
     public class Output

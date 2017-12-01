@@ -25,7 +25,7 @@ namespace Frends.Community.Zip
             // validate that source and destination folders exist
             if (!Directory.Exists(source.Path))
                 throw new DirectoryNotFoundException($"Source directory {source.Path} does not exist.");
-            if (!Directory.Exists(destination.Path) && !destination.CreateDestinationFolder)
+            if (!Directory.Exists(destination.Path) && !options.CreateDestinationFolder)
                 throw new DirectoryNotFoundException($"Destination directory {destination.Path} does not exist.");
 
             var sourceFiles = Directory.EnumerateFiles(source.Path, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
@@ -70,7 +70,7 @@ namespace Frends.Community.Zip
                 }
 
                 // check does destination directory exist and if it should be created
-                if (destination.CreateDestinationFolder && !Directory.Exists(destination.Path))
+                if (options.CreateDestinationFolder && !Directory.Exists(destination.Path))
                     Directory.CreateDirectory(destination.Path);
 
                 var destinationZipFileName = Path.Combine(destination.Path, destination.FileName);
