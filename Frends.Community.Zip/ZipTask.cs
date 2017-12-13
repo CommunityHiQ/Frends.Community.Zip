@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Frends.Community.Zip
 {
-    public class Zip
+    public class ZipTask
     {
         /// <summary>
         /// Create zip archive. See https://github.com/CommunityHiQ/Frends.Community.Zip

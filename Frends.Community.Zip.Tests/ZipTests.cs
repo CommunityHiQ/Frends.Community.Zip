@@ -59,7 +59,7 @@ namespace FRENDS.Community.Zip.Tests
 
         private Output ExecuteCreateArchive()
         {
-            return Frends.Community.Zip.Zip.CreateArchive(_source, _destination, _options, CancellationToken.None);
+            return Frends.Community.Zip.ZipTask.CreateArchive(_source, _destination, _options, CancellationToken.None);
         }
 
         [Test]

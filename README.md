@@ -7,6 +7,7 @@ FRENDS community task for creating zip archive
 - [License](#license)
 - [Building](#building)
 - [Contributing](#contributing)
+- [Change Log](#change-log)
 
 # Installing
 You can install the task via FRENDS UI Task View or you can find the nuget package from the following nuget feed
@@ -89,3 +90,9 @@ When contributing to this repository, please first discuss the change you wish t
 5. Submit a Pull request so that we can review your changes
 
 NOTE: Be sure to merge the latest from "upstream" before making a pull request!
+
+# Change Log
+
+| Version             | Changes                 |
+| ---------------------| ---------------------|
+| 2.0.0 | Initial Frends.Community version of ZipTask converted from old Frends.Common code base |
