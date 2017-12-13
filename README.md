@@ -96,3 +96,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | Version             | Changes                 |
 | ---------------------| ---------------------|
 | 2.0.0 | Initial Frends.Community version of ZipTask converted from old Frends.Common code base |
+| 2.1.0 | Renamed Task class and added Change log section to Readme |
