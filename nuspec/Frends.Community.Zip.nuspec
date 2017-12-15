@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
     <id>Frends.Community.Zip</id>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
     <title>Frends Community Zip</title>
     <authors>HiQ Finland</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -18,8 +18,8 @@
     </frameworkAssemblies>
   </metadata>
   <files>
-    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.dll" target="lib\net451\Frends.Community.Zip.dll" />
-    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.xml" target="lib\net451\Frends.Community.Zip.xml" />
+    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.dll" target="lib\net452\Frends.Community.Zip.dll" />
+    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.xml" target="lib\net452\Frends.Community.Zip.xml" />
     <file src="..\Frends.Community.Zip\FrendsTaskMetadata.json" target="FrendsTaskMetadata.json" />
   </files>
 </package>
