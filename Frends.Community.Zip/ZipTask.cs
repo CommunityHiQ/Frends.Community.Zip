@@ -23,17 +23,17 @@ namespace Frends.Community.Zip
             CancellationToken cancellationToken)
         {
             // validate that source and destination folders exist
-            if (!Directory.Exists(source.Path))
-                throw new DirectoryNotFoundException($"Source directory {source.Path} does not exist.");
-            if (!Directory.Exists(destination.Path) && !options.CreateDestinationFolder)
-                throw new DirectoryNotFoundException($"Destination directory {destination.Path} does not exist.");
+            if (!Directory.Exists(source.DirectoryPath))
+                throw new DirectoryNotFoundException($"Source directory {source.DirectoryPath} does not exist.");
+            if (!Directory.Exists(destination.DirectoryPath) && !options.CreateDestinationFolder)
+                throw new DirectoryNotFoundException($"Destination directory {destination.DirectoryPath} does not exist.");
 
-            var sourceFiles = Directory.EnumerateFiles(source.Path, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            var sourceFiles = Directory.EnumerateFiles(source.DirectoryPath, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
             // If no files were found, throw error or return empty Output object
             if (sourceFiles.Count() == 0) {
                 if (options.ThrowErrorIfNoFilesFound)
-                    throw new FileNotFoundException($"No files found in {source.Path} with file mask '{source.FileMask}'");
+                    throw new FileNotFoundException($"No files found in {source.DirectoryPath} with file mask '{source.FileMask}'");
                 else
                     return new Output { FileCount = 0 };
             }
@@ -65,15 +65,15 @@ namespace Frends.Community.Zip
                     }
                     else
                     {
-                        zipFile.AddFile(fullPath, fullPath.GetRelativePath(source.Path));
+                        zipFile.AddFile(fullPath, fullPath.GetRelativePath(source.DirectoryPath));
                     }
                 }
 
                 // check does destination directory exist and if it should be created
-                if (options.CreateDestinationFolder && !Directory.Exists(destination.Path))
-                    Directory.CreateDirectory(destination.Path);
+                if (options.CreateDestinationFolder && !Directory.Exists(destination.DirectoryPath))
+                    Directory.CreateDirectory(destination.DirectoryPath);
 
-                var destinationZipFileName = Path.Combine(destination.Path, destination.FileName);
+                var destinationZipFileName = Path.Combine(destination.DirectoryPath, destination.FileName);
 
                 if(File.Exists(destinationZipFileName))
                     switch (options.DestinationFileExistsAction)
@@ -89,7 +89,7 @@ namespace Frends.Community.Zip
                 // save zip (overwites existing file)
                 zipFile.Save(destinationZipFileName);
 
-                return new Output { FileName = Path.GetFileName(destinationZipFileName), FilePath = destination.Path, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
+                return new Output { FileName = Path.GetFileName(destinationZipFileName), FilePath = destination.DirectoryPath, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
             }
         }
 

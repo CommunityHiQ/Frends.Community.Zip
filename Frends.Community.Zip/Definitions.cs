@@ -13,11 +13,11 @@ namespace Frends.Community.Zip
     public class SourceProperties
     {
         /// <summary>
-        /// Source path
+        /// Source directory path
         /// </summary>
         [DefaultValue(@"C:\example\folder\")]
         [DefaultDisplayType(DisplayType.Text)]
-        public string Path { get; set; }
+        public string DirectoryPath { get; set; }
 
         /// <summary>
         /// The search string to match against the names of files. 
@@ -39,9 +39,9 @@ namespace Frends.Community.Zip
     public class DestinationProperties
     {
         /// <summary>
-        /// Destination path
+        /// Destination directory path
         /// </summary>
-        public string Path { get; set; }
+        public string DirectoryPath { get; set; }
 
         /// <summary>
         /// Filename of the zip to create
@@ -71,6 +71,7 @@ namespace Frends.Community.Zip
 
     }
 
+    [DisplayName("Options")]
     public class Options
     {
         /// <summary>

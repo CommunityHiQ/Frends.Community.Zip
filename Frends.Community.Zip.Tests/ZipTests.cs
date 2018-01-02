@@ -34,10 +34,10 @@ namespace FRENDS.Community.Zip.Tests
         public void SetupTests()
         {
             _subDirIn = Path.Combine(_dirIn, _subDir);
-            _source = new SourceProperties { Path = _dirIn, FileMask = "*.txt", IncludeSubFolders = false };
+            _source = new SourceProperties { DirectoryPath = _dirIn, FileMask = "*.txt", IncludeSubFolders = false };
             _destination = new DestinationProperties
             {
-                Path = _dirOut,
+                DirectoryPath = _dirOut,
                 FileName = _zipFileName,
                 FlattenFolders = false,
                 Password = "",
@@ -69,13 +69,13 @@ namespace FRENDS.Community.Zip.Tests
 
             Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(2, result.FileCount);
-            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            Assert.That(File.Exists(Path.Combine(_destination.DirectoryPath, _zipFileName)));
         }
 
         [Test]
         public void ZipFiles_Fails_If_SourcePathDoesNotExist()
         {
-            _source.Path = Path.Combine(_dirIn, "foobar");
+            _source.DirectoryPath = Path.Combine(_dirIn, "foobar");
 
             var result = Assert.Throws<DirectoryNotFoundException>(() => ExecuteCreateArchive());
 
@@ -92,7 +92,7 @@ namespace FRENDS.Community.Zip.Tests
             var result = ExecuteCreateArchive();
 
             Assert.AreEqual(0, result.FileCount);
-            Assert.That(!File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            Assert.That(!File.Exists(Path.Combine(_destination.DirectoryPath, _zipFileName)));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace FRENDS.Community.Zip.Tests
         [Test]
         public void ZipFiles_Fails_If_DestinationPathDoesNotExist()
         {
-            _destination.Path = Path.Combine(_destination.Path, "foobar");
+            _destination.DirectoryPath = Path.Combine(_destination.DirectoryPath, "foobar");
 
             var result = Assert.Throws<DirectoryNotFoundException>(() => ExecuteCreateArchive());
 
@@ -117,13 +117,13 @@ namespace FRENDS.Community.Zip.Tests
         public void ZipFiles_NonRecursive_And_CreateDestinationDirectory()
         {
             _options.CreateDestinationFolder = true;
-            _destination.Path = Path.Combine(_dirOut, "newDir");
+            _destination.DirectoryPath = Path.Combine(_dirOut, "newDir");
 
             var result = ExecuteCreateArchive();
 
             Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(2, result.FileCount);
-            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            Assert.That(File.Exists(Path.Combine(_destination.DirectoryPath, _zipFileName)));
         }
         
 
@@ -136,7 +136,7 @@ namespace FRENDS.Community.Zip.Tests
 
             Assert.AreEqual(_zipFileName, result.FileName);
             Assert.AreEqual(4, result.FileCount);
-            Assert.That(File.Exists(Path.Combine(_destination.Path, _zipFileName)));
+            Assert.That(File.Exists(Path.Combine(_destination.DirectoryPath, _zipFileName)));
             var fileNamesWithSubDir = result.ArchivedFiles.Where(s => s.Contains(_subDir)).Count();
             Assert.AreEqual(2, fileNamesWithSubDir);
         }
@@ -204,7 +204,7 @@ namespace FRENDS.Community.Zip.Tests
             ExecuteCreateArchive();
             var result = Assert.Throws<Exception>(() => ExecuteCreateArchive());
 
-            Assert.IsTrue(result.Message.Equals($"Destination file {Path.Combine(_destination.Path, _destination.FileName)} already exists."));
+            Assert.IsTrue(result.Message.Equals($"Destination file {Path.Combine(_destination.DirectoryPath, _destination.FileName)} already exists."));
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace FRENDS.Community.Zip.Tests
             ExecuteCreateArchive();
             ExecuteCreateArchive();
 
-            Assert.AreEqual(1, Directory.GetFiles(_destination.Path, "*.zip").Count());
+            Assert.AreEqual(1, Directory.GetFiles(_destination.DirectoryPath, "*.zip").Count());
         }
 
         [Test]
@@ -227,7 +227,7 @@ namespace FRENDS.Community.Zip.Tests
             var result2 = ExecuteCreateArchive();
             var result3 = ExecuteCreateArchive();
 
-            var zipFiles = Directory.GetFiles(_destination.Path, "*.zip");
+            var zipFiles = Directory.GetFiles(_destination.DirectoryPath, "*.zip");
 
             Assert.AreEqual(3, zipFiles.Count());
             Assert.AreEqual("zip_test.zip", result1.FileName);
