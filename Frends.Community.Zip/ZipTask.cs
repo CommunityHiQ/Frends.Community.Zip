@@ -89,7 +89,7 @@ namespace Frends.Community.Zip
                 // save zip (overwites existing file)
                 zipFile.Save(destinationZipFileName);
 
-                return new Output { FileName = Path.GetFileName(destinationZipFileName), FilePath = destinationZip.Directory, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
+                return new Output { Path = destinationZipFileName, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
             }
         }
 
