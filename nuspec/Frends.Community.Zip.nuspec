@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>Frends.Community.Zip</id>
+    <version>2.2.4</version>
+    <title>Frends Community Zip</title>
+    <authors>HiQ Finland</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Frends Task for creating Zip archive.</description>
+    <summary />
+    <dependencies>
+	    <dependency id="DotNetZip" version="1.10.1" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.CSharp" />
+      <frameworkAssembly assemblyName="System" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.dll" target="lib\net452\Frends.Community.Zip.dll" />
+    <file src="..\Frends.Community.Zip\bin\release\Frends.Community.Zip.xml" target="lib\net452\Frends.Community.Zip.xml" />
+    <file src="..\Frends.Community.Zip\FrendsTaskMetadata.json" target="FrendsTaskMetadata.json" />
+  </files>
+</package>
+
