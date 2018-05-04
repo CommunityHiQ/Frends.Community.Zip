@@ -24,7 +24,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
-| Path | string | Source file(s) directory. | c:\source_folder\ |
+| Directory | string | Source file(s) directory. | c:\source_folder\ |
 | File mask | string | The search string to match against the names of files. Supports wildcards '?' and '*'. | * |
 | Include sub folders | bool | Indicates if sub folders in Path property should be included in search with file mask. | false |
 
@@ -32,7 +32,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
-| Path | string | Directory for zip file created. | c:\destination_folder\ |
+| Directory | string | Directory for zip file created. | c:\destination_folder\ |
 | File name | string | Name of zip file created. | example.zip |
 | Password | string | If set, zip archive will be password protected. | |
 | Flatten folders | bool | Choose if source folder structure should be flatten. | false |
@@ -51,8 +51,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
-| FileName | string | Name of the zip file created | 'my_zipfile.zip' |
-| FilePath | string | Directory where zip file is saved | 'C:\my_zips\' |
+| Path | string | Full path to zip file created. | 'C:\my_zips\my_zipfile.zip' |
 | FileCount | int | Number of files added to zip archive | 10 |
 | ArchivedFiles | List&lt;string&gt; | File names with relative path in zip archive | {'file_1.txt', 'file_2.txt', 'sub_folder/file_3.txt'} |
 

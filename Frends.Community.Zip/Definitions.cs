@@ -98,14 +98,9 @@ namespace Frends.Community.Zip
     public class Output
     {
         /// <summary>
-        /// Filename of zip created
+        /// Full path to zip created
         /// </summary>
-        public string FileName { get; set; }
-
-        /// <summary>
-        /// Path to zip created
-        /// </summary>
-        public string FilePath { get; set; }
+        public string Path { get; set; }
 
         /// <summary>
         /// Number of files in creted zip file
