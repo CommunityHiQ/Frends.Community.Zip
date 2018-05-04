@@ -1,7 +1,7 @@
-﻿using Frends.Tasks.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 
@@ -9,14 +9,13 @@ namespace Frends.Community.Zip
 {
     public enum FileExistAction { Error, Overwrite, Rename};
 
-    [DisplayName("Source")]
     public class SourceProperties
     {
         /// <summary>
         /// Source path
         /// </summary>
         [DefaultValue(@"C:\example\folder\")]
-        [DefaultDisplayType(DisplayType.Text)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string Path { get; set; }
 
         /// <summary>
@@ -25,7 +24,7 @@ namespace Frends.Community.Zip
         /// The default pattern is "*", which returns all files.
         /// </summary>
         [DefaultValue("*")]
-        [DefaultDisplayType(DisplayType.Text)]
+        [DisplayFormat(DataFormatString = "Text")]
         public string FileMask { get; set; }
 
         /// <summary>
@@ -35,17 +34,18 @@ namespace Frends.Community.Zip
         public bool IncludeSubFolders { get; set; }
     }
 
-    [DisplayName("Destination")]
     public class DestinationProperties
     {
         /// <summary>
         /// Destination path
-        /// </summary>
+        /// </summary> 
+        [DisplayFormat(DataFormatString = "Text")]
         public string Path { get; set; }
 
         /// <summary>
         /// Filename of the zip to create
         /// </summary>
+        [DisplayFormat(DataFormatString = "Text")]
         public string FileName { get; set; }
 
         /// <summary>
@@ -62,19 +62,19 @@ namespace Frends.Community.Zip
         public bool FlattenFolders { get; set; }
 
         /// <summary>
-        /// True: If source files contains dublicate names, they are renamed (example.txt --&gt; example_(1).txt)
-        /// False: Throws error if dublicate file names are found
+        /// True: If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt)
+        /// False: Throws error if duplicate file names are found
         /// </summary>
-        [ConditionalDisplay(nameof(FlattenFolders), true)]
+        [UIHint(nameof(FlattenFolders), "", true)]
         [DefaultValue(false)]
-        public bool RenameDublicateFiles { get; set; }
+        public bool RenameDuplicateFiles { get; set; }
 
     }
 
     public class Options
     {
         /// <summary>
-        /// Throw error if no source files are found
+        /// Throw error if no source files are found. Otherwise returns object with FileCount: 0
         /// </summary>
         [DefaultValue(true)]
         public bool ThrowErrorIfNoFilesFound { get; set; }

@@ -13,8 +13,7 @@ FRENDS community task for creating zip archive
 You can install the task via FRENDS UI Task View or you can find the nuget package from the following nuget feed
 'Insert nuget feed here'
 
-Tasks
-=====
+# Tasks
 
 ## CreateArchive
 The Zip.CreateArchive task meant for creating zip file from selected files and/or folders. Created zip file content can be flatten and file can be protected with password.
@@ -37,18 +36,19 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | File name | string | Name of zip file created. | example.zip |
 | Password | string | If set, zip archive will be password protected. | |
 | Flatten folders | bool | Choose if source folder structure should be flatten. | false |
-| Rename dublicate files | bool | If source files contains dublicate names, they are renamed (example.txt --&gt; example_(1).txt) | true |
+| Rename duplicate files | bool | If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt) | true |
 
 #### Options
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
-| Throw error if no files found | bool | If no files were found in source path, throw exception | true |
+| Throw error if no files found | bool | If no files were found in source path, throw exception. Otherwise returns object with FileCount = 0 | true |
 | Destination file exists action | Enum {Error, Overwrite, Rename} | What to do if destination zip file already exists. | Rename (renames zip file: example.zip --&gt; example_(1).zip) |
 | Create destination folder | bool | True: creates destination folder if it does not exist. False: throws error if destination folder is not found. | false |
 
 
 ### Result
+
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
 | FileName | string | Name of the zip file created | 'my_zipfile.zip' |
@@ -68,7 +68,7 @@ Clone a copy of the repo
 
 Restore dependencies
 
-`nuget restore frends.community.sftp`
+`nuget restore frends.community.zip`
 
 Rebuild the project
 
@@ -98,4 +98,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.0.0 | Initial Frends.Community version of ZipTask converted from old Frends.Common code base |
 | 2.1.0 | Renamed Task class and added Change log section to Readme |
 | 2.2.0 | Downgraded Frends.Tasks.Attributes from 1.2.1 to 1.2.0, because of a bug in 1.2.1 |
-| 2.3.0 | Changed target .net framework to 4.5.2 |
+| 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |

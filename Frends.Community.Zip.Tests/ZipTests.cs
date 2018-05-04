@@ -41,7 +41,7 @@ namespace FRENDS.Community.Zip.Tests
                 FileName = _zipFileName,
                 FlattenFolders = false,
                 Password = "",
-                RenameDublicateFiles = false
+                RenameDuplicateFiles = false
             };
             _options = new Options { ThrowErrorIfNoFilesFound = true, CreateDestinationFolder = false, DestinationFileExistsAction = FileExistAction.Error };
 
@@ -183,7 +183,7 @@ namespace FRENDS.Community.Zip.Tests
 
             _source.IncludeSubFolders = true;
             _destination.FlattenFolders = true;
-            _destination.RenameDublicateFiles = true;
+            _destination.RenameDuplicateFiles = true;
 
             var result = ExecuteCreateArchive();
 
