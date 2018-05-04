@@ -12,11 +12,11 @@ namespace Frends.Community.Zip
     public class SourceProperties
     {
         /// <summary>
-        /// Source path
+        /// Source directory
         /// </summary>
         [DefaultValue(@"C:\example\folder\")]
         [DisplayFormat(DataFormatString = "Text")]
-        public string Path { get; set; }
+        public string Directory { get; set; }
 
         /// <summary>
         /// The search string to match against the names of files. 
@@ -37,10 +37,10 @@ namespace Frends.Community.Zip
     public class DestinationProperties
     {
         /// <summary>
-        /// Destination path
+        /// Destination directory
         /// </summary> 
         [DisplayFormat(DataFormatString = "Text")]
-        public string Path { get; set; }
+        public string Directory { get; set; }
 
         /// <summary>
         /// Filename of the zip to create
