@@ -98,3 +98,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.1.0 | Renamed Task class and added Change log section to Readme |
 | 2.2.0 | Downgraded Frends.Tasks.Attributes from 1.2.1 to 1.2.0, because of a bug in 1.2.1 |
 | 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |
+| 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
