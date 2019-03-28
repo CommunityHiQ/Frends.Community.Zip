@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Frends.Community.Zip
 {
     public enum FileExistAction { Error, Overwrite, Rename};
+    public enum UseZip64Option { Always, AsNecessary, Never };
 
     public class SourceProperties
     {
@@ -73,6 +74,14 @@ namespace Frends.Community.Zip
 
     public class Options
     {
+        /// <summary>
+        /// Always: Always use ZIP64 extensions when writing zip archives, even when unnecessary.
+        /// AsNecessary: Use ZIP64 extensions when writing zip archives, as necessary (when single entry or entries in total exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries)
+        /// Never: Do not use ZIP64 extensions when writing zip archives.
+        /// </summary>
+        [DefaultValue(UseZip64Option.AsNecessary)]
+        public UseZip64Option UseZip64 { get; set; }
+
         /// <summary>
         /// Throw error if no source files are found. Otherwise returns object with FileCount: 0
         /// </summary>

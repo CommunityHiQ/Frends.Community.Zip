@@ -40,6 +40,9 @@ namespace Frends.Community.Zip
 
             using (var zipFile = new ZipFile())
             {
+                //Set 'UseZip64WhenSaving' - needed for large zip files
+                zipFile.UseZip64WhenSaving = options.UseZip64.ConvertEnum<Zip64Option>();
+
                 //if password is given add it to archive
                 if (!string.IsNullOrWhiteSpace(destinationZip.Password))
                     zipFile.Password = destinationZip.Password;
