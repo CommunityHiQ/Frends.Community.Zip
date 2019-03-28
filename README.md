@@ -42,6 +42,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
+| Use zip64 | enum<Always, AsNecessary, Never> | **Always:** Always use ZIP64 extensions when writing zip archives, even when unnecessary. **AsNecessary:** Use ZIP64 extensions when writing zip archives, as necessary (when single entry or entries in total exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries) **Never:** Do not use ZIP64 extensions when writing zip archives. | AsNecessary |
 | Throw error if no files found | bool | If no files were found in source path, throw exception. Otherwise returns object with FileCount = 0 | true |
 | Destination file exists action | Enum {Error, Overwrite, Rename} | What to do if destination zip file already exists. | Rename (renames zip file: example.zip --&gt; example_(1).zip) |
 | Create destination folder | bool | True: creates destination folder if it does not exist. False: throws error if destination folder is not found. | false |
