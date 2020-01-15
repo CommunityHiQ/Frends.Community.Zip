@@ -23,7 +23,7 @@ namespace Frends.Community.Zip
             CancellationToken cancellationToken)
         {
             // validate that source and destination folders exist
-            if (!Directory.Exists(source.Directory))
+            if (!Directory.Exists(source.Directory) && source.SourceType == SourceFilesType.PathAndFileMask)
                 throw new DirectoryNotFoundException($"Source directory {source.Directory} does not exist.");
             if (!Directory.Exists(destinationZip.Directory) && !options.CreateDestinationFolder)
                 throw new DirectoryNotFoundException($"Destination directory {destinationZip.Directory} does not exist.");
