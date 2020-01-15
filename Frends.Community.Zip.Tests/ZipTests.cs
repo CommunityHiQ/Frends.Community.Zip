@@ -35,12 +35,11 @@ namespace FRENDS.Community.Zip.Tests
         public void SetupTests()
         {
             _subDirIn = Path.Combine(_dirIn, _subDir);
-            _source = new SourceProperties { Directory = _dirIn, FileMask = "*.txt", IncludeSubFolders = false };
+            _source = new SourceProperties { Directory = _dirIn, FileMask = "*.txt", IncludeSubFolders = false, FlattenFolders = false };
             _destination = new DestinationProperties
             {
                 Directory = _dirOut,
                 FileName = _zipFileName,
-                FlattenFolders = false,
                 Password = "",
                 RenameDuplicateFiles = false
             };
@@ -178,7 +177,7 @@ namespace FRENDS.Community.Zip.Tests
         public void ZipFiles_FlattenFolders()
         {
             _source.IncludeSubFolders = true;
-            _destination.FlattenFolders = true;
+            _source.FlattenFolders = true;
 
             var result = ExecuteCreateArchive();
 
@@ -197,7 +196,7 @@ namespace FRENDS.Community.Zip.Tests
             File.WriteAllText(Path.Combine(_subDirIn, dublicateFileName), "Seaman: Swallow, come!");
 
             _source.IncludeSubFolders = true;
-            _destination.FlattenFolders = true;
+            _source.FlattenFolders = true;
 
             var result = Assert.Throws<Exception>(() => ExecuteCreateArchive());
             Assert.IsTrue(result.Message.Contains("already exists in zip!"));
@@ -215,7 +214,7 @@ namespace FRENDS.Community.Zip.Tests
             File.WriteAllText(Path.Combine(subDir2, dublicateFileName), "Seaman: Swallow, come!");
 
             _source.IncludeSubFolders = true;
-            _destination.FlattenFolders = true;
+            _source.FlattenFolders = true;
             _destination.RenameDuplicateFiles = true;
 
             var result = ExecuteCreateArchive();

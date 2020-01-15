@@ -83,8 +83,10 @@ namespace Frends.Community.Zip
                     // check if cancellation is requested
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    // FlattenFolders = true: add all files to zip root, otherwise adda folders to zip
-                    var pathInArchive = destinationZip.FlattenFolders ? "" : fullPath.GetRelativePath(source.Directory);
+                    // FlattenFolders = true: add all files to zip root, otherwise adda folders to zip. 
+                    // Only available when source type is path and filemask
+                    var pathInArchive = (source.FlattenFolders || source.SourceType == SourceFilesType.FileList) ? "" : fullPath.GetRelativePath(source.Directory);
+                    
 
                     AddFileToZip(zipFile, fullPath, pathInArchive, destinationZip.RenameDuplicateFiles);
                 }

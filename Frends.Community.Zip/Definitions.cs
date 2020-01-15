@@ -44,6 +44,14 @@ namespace Frends.Community.Zip
         [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
         public bool IncludeSubFolders { get; set; }
 
+
+        /// <summary>
+        /// Choose if source folder structure should be flatten when zipped.
+        /// </summary>
+        [DefaultValue(false)]
+        [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
+        public bool FlattenFolders { get; set; }
+
         /// <summary>
         /// List&lt;string&gt; of full file paths to include in zip
         /// </summary>
@@ -77,13 +85,6 @@ namespace Frends.Community.Zip
         /// </summary>
         [PasswordPropertyText]
         public string Password { get; set; }
-
-
-        /// <summary>
-        /// Choose if source folder structure should be flatten.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool FlattenFolders { get; set; }
 
         /// <summary>
         /// True: If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt)

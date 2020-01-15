@@ -30,6 +30,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | File paths list | List<string> | A list of full paths to files to be added to zip |
 | Remove zipped files | bool | **true:** Removes files from source path that are added to zip. **false:** Files added to zip are left at source path. |
 | Include sub folders | bool | Indicates if sub folders in Path property should be included in search with file mask. | false |
+| Flatten folders | bool | Choose if source folder structure should be flatten when zipped. | false |
 
 #### Destination
 
@@ -38,7 +39,6 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | Directory | string | Directory for zip file created. | c:\destination_folder\ |
 | File name | string | Name of zip file created. | example.zip |
 | Password | string | If set, zip archive will be password protected. | |
-| Flatten folders | bool | Choose if source folder structure should be flatten. | false |
 | Rename duplicate files | bool | If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt) | true |
 
 #### Options
@@ -104,4 +104,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |
 | 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
-| 3.1.1 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
+| 3.1.3 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
