@@ -95,6 +95,7 @@ namespace FRENDS.Community.Zip.Tests
         public void ZipFiles_FilePathsZipsFilesInList()
         {
             _source.SourceType = SourceFilesType.FileList;
+            _source.Directory = "";
             var filePath = new List<string>(); 
             filePath.Add(Directory.GetFiles(_dirIn, "*.txt")[0]);
             _source.FilePathsList = filePath;
@@ -226,6 +227,19 @@ namespace FRENDS.Community.Zip.Tests
             Assert.Contains("dublicate_file.txt", result.ArchivedFiles);
             Assert.Contains("dublicate_file_(1).txt", result.ArchivedFiles);
             Assert.Contains("dublicate_file_(2).txt", result.ArchivedFiles);
+        }
+
+        [Test]
+        public void ZipFiles_FileList_FlattensFolders()
+        {
+            _source.FlattenFolders = false;
+            _source.Directory = "";
+            _source.SourceType = SourceFilesType.FileList;
+            var filePath = Directory.GetFiles(_dirIn)[0];
+            _source.FilePathsList = new List<string> {filePath };
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(Path.GetFileName(filePath), result.ArchivedFiles[0]);
         }
 
         [Test]
