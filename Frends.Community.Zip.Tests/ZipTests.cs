@@ -73,6 +73,25 @@ namespace FRENDS.Community.Zip.Tests
         }
 
         [Test]
+        public void ZipFiles_DoesNotDeleteSourceFiles()
+        {
+            var result = ExecuteCreateArchive();
+            var sourceFiles = Directory.GetFiles(_dirIn, "*.txt");
+
+            Assert.AreEqual(2, sourceFiles.Length);
+        }
+
+        [Test]
+        public void ZipFiles_DeletesSourceFiles()
+        {
+            _source.RemoveZippedFiles = true;
+            var result = ExecuteCreateArchive();
+            var sourceFiles = Directory.GetFiles(_dirIn, "*.txt");
+
+            Assert.AreEqual(0, sourceFiles.Length);
+        }
+
+        [Test]
         public void ZipFiles_Fails_If_SourcePathDoesNotExist()
         {
             _source.Directory = Path.Combine(_dirIn, "foobar");

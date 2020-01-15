@@ -92,6 +92,10 @@ namespace Frends.Community.Zip
                 // save zip (overwites existing file)
                 zipFile.Save(destinationZipFileName);
 
+                // remove source files?
+                foreach(var fullPath in sourceFiles)
+                    if (source.RemoveZippedFiles) File.Delete(fullPath);
+
                 return new Output { Path = destinationZipFileName, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
             }
         }
