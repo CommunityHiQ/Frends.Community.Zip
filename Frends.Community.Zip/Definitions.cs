@@ -89,8 +89,7 @@ namespace Frends.Community.Zip
         /// True: If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt)
         /// False: Throws error if duplicate file names are found
         /// </summary>
-        [UIHint(nameof(FlattenFolders), "", true)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool RenameDuplicateFiles { get; set; }
 
     }
@@ -116,6 +115,7 @@ namespace Frends.Community.Zip
         /// Error: throws error
         /// Overwrite: Overwrites existing zip file with new one
         /// Rename: Renames new zip file (example.zip --&gt; example_(1).zip)
+        /// Append: Adds new files to zip, if file already exists in zip, it is renamed
         /// </summary>
         [DefaultValue(FileExistAction.Error)]
         public FileExistAction DestinationFileExistsAction { get; set; }

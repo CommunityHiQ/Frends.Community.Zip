@@ -269,6 +269,18 @@ namespace FRENDS.Community.Zip.Tests
         }
 
         [Test]
+        public void ZipFile_Exists_Appends_NewFiles()
+        {
+            var result = ExecuteCreateArchive();
+            Assert.AreEqual(2, result.FileCount);
+            _options.DestinationFileExistsAction = FileExistAction.Append;
+            _destination.RenameDuplicateFiles = true;
+            var appendResult = ExecuteCreateArchive();
+            Assert.AreEqual(4, appendResult.FileCount);
+
+        }
+
+        [Test]
         public void ZipFiles_WithPassword_NeedsPasword_For_Extraction()
         {
             _destination.Password = "password";
