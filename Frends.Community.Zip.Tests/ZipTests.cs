@@ -5,6 +5,7 @@ using Frends.Community.Zip;
 using System.Threading;
 using System.Linq;
 using Ionic.Zip;
+using System.Collections.Generic;
 
 namespace FRENDS.Community.Zip.Tests
 {
@@ -89,6 +90,19 @@ namespace FRENDS.Community.Zip.Tests
             var sourceFiles = Directory.GetFiles(_dirIn, "*.txt");
 
             Assert.AreEqual(0, sourceFiles.Length);
+        }
+
+        [Test]
+        public void ZipFiles_FilePathsZipsFilesInList()
+        {
+            _source.SourceType = SourceFilesType.FileList;
+            var filePath = new List<string>(); 
+            filePath.Add(Directory.GetFiles(_dirIn, "*.txt")[0]);
+            _source.FilePathsList = filePath;
+
+            var result = ExecuteCreateArchive();
+
+            Assert.AreEqual(1, result.FileCount);
         }
 
         [Test]

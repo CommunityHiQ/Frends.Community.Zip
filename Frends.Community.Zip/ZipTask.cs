@@ -28,7 +28,17 @@ namespace Frends.Community.Zip
             if (!Directory.Exists(destinationZip.Directory) && !options.CreateDestinationFolder)
                 throw new DirectoryNotFoundException($"Destination directory {destinationZip.Directory} does not exist.");
 
-            var sourceFiles = Directory.EnumerateFiles(source.Directory, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+            var sourceFiles = new List<string>();
+            // Populate source files list according to input type
+            switch(source.SourceType)
+            {
+                case SourceFilesType.PathAndFileMask:
+                    sourceFiles = Directory.EnumerateFiles(source.Directory, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).ToList();
+                    break;
+                case SourceFilesType.FileList:
+                    sourceFiles = source.FilePathsList;
+                    break;
+            }
 
             // If no files were found, throw error or return empty Output object
             if (sourceFiles.Count() == 0) {
