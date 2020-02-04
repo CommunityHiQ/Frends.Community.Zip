@@ -104,4 +104,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |
 | 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
-| 3.1.3 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
+| 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
