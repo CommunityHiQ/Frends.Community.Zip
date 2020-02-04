@@ -7,15 +7,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Frends.Community.Zip
 {
-    public enum FileExistAction { Error, Overwrite, Rename};
+    public enum FileExistAction { Error, Append, Overwrite, Rename};
+    public enum SourceFilesType { PathAndFileMask, FileList }
     public enum UseZip64Option { Always, AsNecessary, Never };
 
     public class SourceProperties
     {
         /// <summary>
+        /// Source files input type.
+        /// </summary>
+        [DefaultValue(SourceFilesType.PathAndFileMask)]
+        public SourceFilesType SourceType { get; set; }
+
+        /// <summary>
         /// Source directory
         /// </summary>
         [DefaultValue(@"C:\example\folder\")]
+        [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
         [DisplayFormat(DataFormatString = "Text")]
         public string Directory { get; set; }
 
@@ -26,13 +34,36 @@ namespace Frends.Community.Zip
         /// </summary>
         [DefaultValue("*")]
         [DisplayFormat(DataFormatString = "Text")]
+        [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
         public string FileMask { get; set; }
 
         /// <summary>
         /// Indicates if sub folders and files should also be zipped
         /// </summary>
         [DefaultValue(false)]
+        [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
         public bool IncludeSubFolders { get; set; }
+
+
+        /// <summary>
+        /// Choose if source folder structure should be flatten when zipped.
+        /// </summary>
+        [DefaultValue(false)]
+        [UIHint(nameof(SourceType), "", SourceFilesType.PathAndFileMask)]
+        public bool FlattenFolders { get; set; }
+
+        /// <summary>
+        /// List&lt;string&gt; of full file paths to include in zip
+        /// </summary>
+        [DisplayFormat(DataFormatString = "Expression")]
+        [UIHint(nameof(SourceType), "", SourceFilesType.FileList)]
+        public List<string> FilePathsList { get; set; }
+
+        /// <summary>
+        /// If true, files added to the zip are removed from source directory
+        /// </summary>
+        [DefaultValue(false)]
+        public bool RemoveZippedFiles { get; set; }
     }
 
     public class DestinationProperties
@@ -55,19 +86,11 @@ namespace Frends.Community.Zip
         [PasswordPropertyText]
         public string Password { get; set; }
 
-
-        /// <summary>
-        /// Choose if source folder structure should be flatten.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool FlattenFolders { get; set; }
-
         /// <summary>
         /// True: If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt)
         /// False: Throws error if duplicate file names are found
         /// </summary>
-        [UIHint(nameof(FlattenFolders), "", true)]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool RenameDuplicateFiles { get; set; }
 
     }
@@ -93,6 +116,7 @@ namespace Frends.Community.Zip
         /// Error: throws error
         /// Overwrite: Overwrites existing zip file with new one
         /// Rename: Renames new zip file (example.zip --&gt; example_(1).zip)
+        /// Append: Adds new files to zip, if file already exists in zip, it is renamed
         /// </summary>
         [DefaultValue(FileExistAction.Error)]
         public FileExistAction DestinationFileExistsAction { get; set; }

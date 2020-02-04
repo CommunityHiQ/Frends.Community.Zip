@@ -24,9 +24,13 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
+| Source type | enum<PathAndFileMask, FileList> | **PathAndFileMask:** Source files are fetched by given directory and filemask. **FileList:** Source files are given as a list of full paths to file |
 | Directory | string | Source file(s) directory. | c:\source_folder\ |
 | File mask | string | The search string to match against the names of files. Supports wildcards '?' and '*'. | * |
+| File paths list | List<string> | A list of full paths to files to be added to zip |
+| Remove zipped files | bool | **true:** Removes files from source path that are added to zip. **false:** Files added to zip are left at source path. |
 | Include sub folders | bool | Indicates if sub folders in Path property should be included in search with file mask. | false |
+| Flatten folders | bool | Choose if source folder structure should be flatten when zipped. | false |
 
 #### Destination
 
@@ -35,7 +39,6 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | Directory | string | Directory for zip file created. | c:\destination_folder\ |
 | File name | string | Name of zip file created. | example.zip |
 | Password | string | If set, zip archive will be password protected. | |
-| Flatten folders | bool | Choose if source folder structure should be flatten. | false |
 | Rename duplicate files | bool | If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt) | true |
 
 #### Options
@@ -44,7 +47,7 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | ---------------------| ---------------------| ------------------------------------ | ----- |
 | Use zip64 | enum<Always, AsNecessary, Never> | **Always:** Always use ZIP64 extensions when writing zip archives, even when unnecessary. **AsNecessary:** Use ZIP64 extensions when writing zip archives, as necessary (when single entry or entries in total exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries) **Never:** Do not use ZIP64 extensions when writing zip archives. | AsNecessary |
 | Throw error if no files found | bool | If no files were found in source path, throw exception. Otherwise returns object with FileCount = 0 | true |
-| Destination file exists action | Enum {Error, Overwrite, Rename} | What to do if destination zip file already exists. | Rename (renames zip file: example.zip --&gt; example_(1).zip) |
+| Destination file exists action | enum <Error, Append, Overwrite, Rename> | What to do if destination zip file already exists. | Rename (renames zip file: example.zip --&gt; example_(1).zip) |
 | Create destination folder | bool | True: creates destination folder if it does not exist. False: throws error if destination folder is not found. | false |
 
 
@@ -101,3 +104,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |
 | 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
+| 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
