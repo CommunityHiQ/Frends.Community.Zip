@@ -15,6 +15,7 @@ You can install the task via FRENDS UI Task View or you can find the nuget packa
 
 # Tasks
 
+
 ## CreateArchive
 The Zip.CreateArchive task meant for creating zip file from selected files and/or folders. Created zip file content can be flatten and file can be protected with password.
 
