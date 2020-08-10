@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using NUnit.Framework;
 using Frends.Community.Zip;
@@ -23,7 +23,7 @@ namespace FRENDS.Community.Zip.Tests
         private SourceProperties _source;
         private DestinationProperties _destination;
         private Options _options;
-        
+
         [TearDown]
         public void TearDown()
         {
@@ -96,7 +96,7 @@ namespace FRENDS.Community.Zip.Tests
         {
             _source.SourceType = SourceFilesType.FileList;
             _source.Directory = "";
-            var filePath = new List<string>(); 
+            var filePath = new List<string>();
             filePath.Add(Directory.GetFiles(_dirIn, "*.txt")[0]);
             _source.FilePathsList = filePath;
 
@@ -158,7 +158,7 @@ namespace FRENDS.Community.Zip.Tests
             Assert.AreEqual(2, result.FileCount);
             Assert.That(File.Exists(Path.Combine(_destination.Directory, _zipFileName)));
         }
-        
+
 
         [Test]
         public void ZipFiles_Recursive()
@@ -236,7 +236,7 @@ namespace FRENDS.Community.Zip.Tests
             _source.Directory = "";
             _source.SourceType = SourceFilesType.FileList;
             var filePath = Directory.GetFiles(_dirIn)[0];
-            _source.FilePathsList = new List<string> {filePath };
+            _source.FilePathsList = new List<string> { filePath };
             var result = ExecuteCreateArchive();
 
             Assert.AreEqual(Path.GetFileName(filePath), result.ArchivedFiles[0]);
@@ -301,7 +301,7 @@ namespace FRENDS.Community.Zip.Tests
             var zipFileName = result.Path;
             var extractPath = Path.Combine(_dirOut, "extracted");
 
-            using(var zip = ZipFile.Read(zipFileName))
+            using (var zip = ZipFile.Read(zipFileName))
             {
                 Assert.Throws<BadPasswordException>(() => zip.ExtractAll(extractPath));
 
@@ -315,4 +315,3 @@ namespace FRENDS.Community.Zip.Tests
         }
     }
 }
-

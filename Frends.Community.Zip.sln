@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip", "Frends.Community.Zip\Frends.Community.Zip.csproj", "{BD060DC4-19A9-4904-82C6-F0E01D89F97E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.Community.Zip", "Frends.Community.Zip\Frends.Community.Zip.csproj", "{35C305C0-8108-4A98-BB1D-AFE5C926239E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.Community.Zip.Tests", "Frends.Community.Zip.Tests\Frends.Community.Zip.Tests.csproj", "{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Frends.Community.Zip.Tests", "Frends.Community.Zip.Tests\Frends.Community.Zip.Tests.csproj", "{8CA92187-8E4F-4414-803B-EC899479022E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FD4D4AA3-65CD-43F1-95DD-0DB1219585E3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{78F7F22E-6E20-4BCE-8362-0C558568B729}"
 	ProjectSection(SolutionItems) = preProject
-		nuspec\Frends.Community.Zip.nuspec = nuspec\Frends.Community.Zip.nuspec
+		.gitignore = .gitignore
 		Frends.Community.Zip\FrendsTaskMetadata.json = Frends.Community.Zip\FrendsTaskMetadata.json
-		LICENSE = LICENSE
+		..\..\..\..\Frends.Community.Zip-master\Frends.Community.Zip-master\LICENSE = ..\..\..\..\Frends.Community.Zip-master\Frends.Community.Zip-master\LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -21,19 +21,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BD060DC4-19A9-4904-82C6-F0E01D89F97E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD060DC4-19A9-4904-82C6-F0E01D89F97E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD060DC4-19A9-4904-82C6-F0E01D89F97E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD060DC4-19A9-4904-82C6-F0E01D89F97E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38DCF61C-E65B-4EE4-9E7F-B0FEA0064EC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35C305C0-8108-4A98-BB1D-AFE5C926239E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35C305C0-8108-4A98-BB1D-AFE5C926239E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35C305C0-8108-4A98-BB1D-AFE5C926239E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35C305C0-8108-4A98-BB1D-AFE5C926239E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CA92187-8E4F-4414-803B-EC899479022E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA92187-8E4F-4414-803B-EC899479022E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CA92187-8E4F-4414-803B-EC899479022E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CA92187-8E4F-4414-803B-EC899479022E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {814AF32F-8EAC-4164-BAEA-34835C15436E}
+		SolutionGuid = {55BC6629-85C9-48D8-8CA2-B0046AF1AF4B}
 	EndGlobalSection
 EndGlobal
