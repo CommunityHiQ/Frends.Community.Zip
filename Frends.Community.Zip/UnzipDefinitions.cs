@@ -11,7 +11,7 @@ namespace Frends.Community.Zip
     /// <summary>
     /// Source properties
     /// </summary>
-    [DisplayName("Source")]
+    [DisplayName("Input")]
     public class UnzipSourceProperties
     {
         /// <summary>
@@ -40,7 +40,7 @@ namespace Frends.Community.Zip
         [DefaultValue(@"C:\example")]
         [DisplayName(@"Destination directory")]
         [DisplayFormat(DataFormatString ="Text")]
-        public string DirectoryPath { get; set; }
+        public string DestinationDirectory { get; set; }
     }
     /// <summary>
     /// Options

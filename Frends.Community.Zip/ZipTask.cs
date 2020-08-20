@@ -170,7 +170,7 @@ namespace Frends.Community.Zip
         }
 
         /// <summary>
-        /// A Frends task for extracting zip archives
+        /// A Frends task for extracting zip archives. See https://github.com/CommunityHiQ/Frends.Community.Zip
         /// </summary>
         /// <param name="source">Source properties</param>
         /// <param name="destination">Destination properties</param>
@@ -178,8 +178,7 @@ namespace Frends.Community.Zip
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Output-object with a List of extracted files</returns>
         public static UnzipOutput ExtractArchive(
-            [PropertyTab] UnzipSourceProperties source,
-            [PropertyTab] UnzipDestinationProperties destination,
+            [PropertyTab] UnzipSourceProperties source, UnzipDestinationProperties destination,
             [PropertyTab] UnzipOptions options,
             CancellationToken cancellationToken)
         {
@@ -187,12 +186,12 @@ namespace Frends.Community.Zip
             if (!File.Exists(source.SourceFile))
                 throw new FileNotFoundException($"Source file {source.SourceFile} does not exist.");
 
-            if (!Directory.Exists(destination.DirectoryPath) && !options.CreateDestinationDirectory)
-                throw new DirectoryNotFoundException($"Destination directory {destination.DirectoryPath} does not exist.");
+            if (!Directory.Exists(destination.DestinationDirectory) && !options.CreateDestinationDirectory)
+                throw new DirectoryNotFoundException($"Destination directory {destination.DestinationDirectory} does not exist.");
 
             if (options.CreateDestinationDirectory)
             {
-                Directory.CreateDirectory(destination.DirectoryPath);
+                Directory.CreateDirectory(destination.DestinationDirectory);
             }
 
             UnzipOutput output = new UnzipOutput();
@@ -213,17 +212,17 @@ namespace Frends.Community.Zip
                     case UnzipFileExistAction.Error:
                     case UnzipFileExistAction.Overwrite:
                         zip.ExtractExistingFile = (options.DestinationFileExistsAction == UnzipFileExistAction.Overwrite) ? ExtractExistingFileAction.OverwriteSilently : ExtractExistingFileAction.Throw;
-                        zip.ExtractAll(destination.DirectoryPath);
+                        zip.ExtractAll(destination.DestinationDirectory);
                         break;
                     case UnzipFileExistAction.Rename:
                         foreach (ZipEntry z in zip)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
-                            if (File.Exists(Path.Combine(destination.DirectoryPath, z.FileName)))
+                            if (File.Exists(Path.Combine(destination.DestinationDirectory, z.FileName)))
                             {
                                 //find a filename that does not exist 
-                                string FullPath = Extensions.GetNewFilename(Path.Combine(Path.GetDirectoryName(destination.DirectoryPath), z.FileName), z.FileName, cancellationToken);
+                                string FullPath = Extensions.GetNewFilename(Path.Combine(Path.GetDirectoryName(destination.DestinationDirectory), z.FileName), z.FileName, cancellationToken);
                                 path = FullPath;
 
                                 using (FileStream fs = new FileStream(FullPath, FileMode.Create, FileAccess.Write))
@@ -233,7 +232,7 @@ namespace Frends.Community.Zip
                             }
                             else
                             {
-                                z.Extract(destination.DirectoryPath);
+                                z.Extract(destination.DestinationDirectory);
                             }
                         }
                         break;

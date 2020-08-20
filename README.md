@@ -66,17 +66,12 @@ Extracts files from a zip-archive
 
 ### Task Properties
 
-#### Source
+#### Input
 
 | Property             | Type                 | Description                          | Example |
 | ---------------------| ---------------------| ------------------------------------ | ----- |
 | SourceFile | string | Full path to the zip-archive | c:\source_folder\file.zip |
 | Password | string | (Optional) Archive password | secret |
-
-#### Destination
-
-| Property             | Type                 | Description                          | Example |
-| ---------------------| ---------------------| ------------------------------------ | ----- |
 | DestinationDirectory | string | Destination directory | c:\destination_directory\ |
 
 #### Options
