@@ -4,6 +4,7 @@ FRENDS community task for creating zip archive
 - [Installing](#installing)
 - [Tasks](#tasks)
   - [Create Archive](#createarchive)
+  - [Extract Archive](#extractarchive)
 - [License](#license)
 - [Building](#building)
 - [Contributing](#contributing)
