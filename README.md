@@ -60,6 +60,37 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | FileCount | int | Number of files added to zip archive | 10 |
 | ArchivedFiles | List&lt;string&gt; | File names with relative path in zip archive | {'file_1.txt', 'file_2.txt', 'sub_folder/file_3.txt'} |
 
+## ExtractArchive
+Extracts files from a zip-archive 
+
+### Task Properties
+
+#### Source
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| SourceFile | string | Full path to the zip-archive | c:\source_folder\file.zip |
+| Password | string | (Optional) Archive password | secret |
+
+#### Destination
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| DestinationDirectory | string | Destination directory | c:\destination_directory\ |
+
+#### Options
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| FileExistAction | enum(Error, Overwrite, Rename) | Throw error, Overwrite file or Rename file | Error |
+| CreateDestinationDirectory | bool | Create destination directory if it does not exist | true|
+
+
+### Result
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| ExtractedFiles | List`<string>` | a List of extracted files | {"file1.txt", "file2.txt", ...}|
+
 # License
 
 This project is licensed under the MIT License - see the LICENSE file for details

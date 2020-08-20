@@ -2,6 +2,9 @@
 	"Tasks": [
 		{
 			"TaskMethod": "Frends.Community.Zip.ZipTask.CreateArchive"
+		},
+		{
+			"TaskMethod": "Frends.Community.Zip.ZipTask.ExtractArchive"
 		}
 	]
 }
