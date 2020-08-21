@@ -172,39 +172,38 @@ namespace Frends.Community.Zip
         /// <summary>
         /// A Frends task for extracting zip archives. See https://github.com/CommunityHiQ/Frends.Community.Zip
         /// </summary>
-        /// <param name="source">Source properties</param>
-        /// <param name="destination">Destination properties</param>
+        /// <param name="input">Input properties</param>
         /// <param name="options">Options</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>Output-object with a List of extracted files</returns>
         public static UnzipOutput ExtractArchive(
-            [PropertyTab] UnzipSourceProperties source, UnzipDestinationProperties destination,
+            [PropertyTab] UnzipInputProperties input,
             [PropertyTab] UnzipOptions options,
             CancellationToken cancellationToken)
         {
 
-            if (!File.Exists(source.SourceFile))
-                throw new FileNotFoundException($"Source file {source.SourceFile} does not exist.");
+            if (!File.Exists(input.SourceFile))
+                throw new FileNotFoundException($"Source file {input.SourceFile} does not exist.");
 
-            if (!Directory.Exists(destination.DestinationDirectory) && !options.CreateDestinationDirectory)
-                throw new DirectoryNotFoundException($"Destination directory {destination.DestinationDirectory} does not exist.");
+            if (!Directory.Exists(input.DestinationDirectory) && !options.CreateDestinationDirectory)
+                throw new DirectoryNotFoundException($"Destination directory {input.DestinationDirectory} does not exist.");
 
             if (options.CreateDestinationDirectory)
             {
-                Directory.CreateDirectory(destination.DestinationDirectory);
+                Directory.CreateDirectory(input.DestinationDirectory);
             }
 
             UnzipOutput output = new UnzipOutput();
 
-            using (ZipFile zip = ZipFile.Read(source.SourceFile))
+            using (ZipFile zip = ZipFile.Read(input.SourceFile))
             {
                 string path = null;
                 zip.ExtractProgress += (sender, e) => Zip_ExtractProgress(sender, e, output, path);
 
                 //if password is set
-                if (!string.IsNullOrWhiteSpace(source.Password))
+                if (!string.IsNullOrWhiteSpace(input.Password))
                 {
-                    zip.Password = source.Password;
+                    zip.Password = input.Password;
                 }
 
                 switch (options.DestinationFileExistsAction)
@@ -212,17 +211,17 @@ namespace Frends.Community.Zip
                     case UnzipFileExistAction.Error:
                     case UnzipFileExistAction.Overwrite:
                         zip.ExtractExistingFile = (options.DestinationFileExistsAction == UnzipFileExistAction.Overwrite) ? ExtractExistingFileAction.OverwriteSilently : ExtractExistingFileAction.Throw;
-                        zip.ExtractAll(destination.DestinationDirectory);
+                        zip.ExtractAll(input.DestinationDirectory);
                         break;
                     case UnzipFileExistAction.Rename:
                         foreach (ZipEntry z in zip)
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
-                            if (File.Exists(Path.Combine(destination.DestinationDirectory, z.FileName)))
+                            if (File.Exists(Path.Combine(input.DestinationDirectory, z.FileName)))
                             {
                                 //find a filename that does not exist 
-                                string FullPath = Extensions.GetNewFilename(Path.Combine(Path.GetDirectoryName(destination.DestinationDirectory), z.FileName), z.FileName, cancellationToken);
+                                string FullPath = Extensions.GetNewFilename(Path.Combine(Path.GetDirectoryName(input.DestinationDirectory), z.FileName), z.FileName, cancellationToken);
                                 path = FullPath;
 
                                 using (FileStream fs = new FileStream(FullPath, FileMode.Create, FileAccess.Write))
@@ -232,7 +231,7 @@ namespace Frends.Community.Zip
                             }
                             else
                             {
-                                z.Extract(destination.DestinationDirectory);
+                                z.Extract(input.DestinationDirectory);
                             }
                         }
                         break;

@@ -12,7 +12,7 @@ namespace Frends.Community.Zip
     /// Source properties
     /// </summary>
     [DisplayName("Input")]
-    public class UnzipSourceProperties
+    public class UnzipInputProperties
     {
         /// <summary>
         /// Full path to the source file
@@ -27,13 +27,7 @@ namespace Frends.Community.Zip
         [DefaultValue("")]
         [PasswordPropertyText]
         public string Password { get; set; }
-    }
-    /// <summary>
-    /// Destination properties
-    /// </summary>
-    [DisplayName("Destination")]
-    public class UnzipDestinationProperties
-    {
+ 
         /// <summary>
         /// Destination directory
         /// </summary>
