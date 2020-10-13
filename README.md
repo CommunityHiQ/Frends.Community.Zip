@@ -4,6 +4,7 @@ FRENDS community task for creating zip archive
 - [Installing](#installing)
 - [Tasks](#tasks)
   - [Create Archive](#createarchive)
+  - [Extract Archive](#extractarchive)
 - [License](#license)
 - [Building](#building)
 - [Contributing](#contributing)
@@ -59,6 +60,32 @@ The Zip.CreateArchive task meant for creating zip file from selected files and/o
 | Path | string | Full path to zip file created. | 'C:\my_zips\my_zipfile.zip' |
 | FileCount | int | Number of files added to zip archive | 10 |
 | ArchivedFiles | List&lt;string&gt; | File names with relative path in zip archive | {'file_1.txt', 'file_2.txt', 'sub_folder/file_3.txt'} |
+
+## ExtractArchive
+Extracts files from a zip-archive 
+
+### Task Properties
+
+#### Input
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| SourceFile | string | Full path to the zip-archive | c:\source_folder\file.zip |
+| Password | string | (Optional) Archive password | secret |
+| DestinationDirectory | string | Destination directory | c:\destination_directory\ |
+
+#### Options
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| FileExistAction | enum(Error, Overwrite, Rename) | Throw error, Overwrite file or Rename file | Error |
+| CreateDestinationDirectory | bool | Create destination directory if it does not exist | true|
+
+
+### Result
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| ExtractedFiles | List`<string>` | a List of extracted files | {"file1.txt", "file2.txt", ...}|
 
 # License
 
