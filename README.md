@@ -87,6 +87,33 @@ Extracts files from a zip-archive
 | ---------------------| ---------------------| ------------------------------------ | ----- |
 | ExtractedFiles | List`<string>` | a List of extracted files | {"file1.txt", "file2.txt", ...}|
 
+## CreateArchiveInMemory
+Creates a zip archive directly in memory.
+
+### Task Properties
+
+#### Input
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| FileName | string | File name for the bytes to be zipped | file.txt |
+| FileContent | byte[] | File content bytes |  |
+
+#### Options
+
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| Use zip64 | enum<Always, AsNecessary, Never> | **Always:** Always use ZIP64 extensions when writing zip archives, even when unnecessary. **AsNecessary:** Use ZIP64 extensions when writing zip archives, as necessary (when single entry or entries in total exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries) **Never:** Do not use ZIP64 extensions when writing zip archives. | AsNecessary |
+| Password | string | (Optional) Archive password | secret |
+| Rename duplicate files | bool | If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt) | true |
+
+
+
+### Result
+| Property             | Type                 | Description                          | Example |
+| ---------------------| ---------------------| ------------------------------------ | ----- |
+| ResultBytes | byte[] | byte array representing the zip file | |
+
 # License
 
 This project is licensed under the MIT License - see the LICENSE file for details
@@ -132,4 +159,5 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.3.0 | Changed target .net framework to 4.5.2. Replaced Frends.Task.Attributes with ComponentModel.DataAnnotations |
 | 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
-| 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
+| 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path.
+| 3.1.11 | Added possibility to create Zip archive straight into memory. |
