@@ -5,6 +5,9 @@
 		},
 		{
 			"TaskMethod": "Frends.Community.Zip.ZipTask.ExtractArchive"
+		},
+		{
+			"TaskMethod": "Frends.Community.Zip.ZipTask.CreateArchiveInMemory"
 		}
 	]
 }

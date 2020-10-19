@@ -48,7 +48,7 @@ namespace Frends.Community.Zip.InMemoryTests
                         },
                         new MemoryFiles
                         {
-                            FileName = "test2.txt",
+                            FileName = "folder/test2.txt",
                             FileContent = Encoding.UTF8.GetBytes(mockFiles[1])
                         }
                     }
@@ -79,7 +79,7 @@ namespace Frends.Community.Zip.InMemoryTests
             ZipTask.ExtractArchive(unzipInput, unzipOptions, CancellationToken.None);
 
             Assert.True(File.Exists(Path.Combine(_outPath, "test1.txt")));
-            Assert.True(File.Exists(Path.Combine(_outPath, "test2.txt")));
+            Assert.True(File.Exists(Path.Combine(_outPath, "folder/test2.txt")));
         }
     }
 }

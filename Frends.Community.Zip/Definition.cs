@@ -159,7 +159,7 @@ namespace Frends.Community.Zip
         /// <summary>
         /// File content bytes
         /// </summary>
-        // [DisplayFormat(DataFormatString = "Text")]
+        [DisplayFormat(DataFormatString = "Expression")]
         public byte[] FileContent { get; set; }
     }
 

@@ -10,7 +10,7 @@
     <IncludeSource>true</IncludeSource>
     <PackageTags>Frends</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>3.1.11</Version>
+    <Version>3.1.13</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -126,17 +126,19 @@ Clone a copy of the repo
 
 Restore dependencies
 
-`nuget restore frends.community.zip`
+`dotnet restore`
 
 Rebuild the project
 
-Run Tests with nunit3. Tests can be found under
+`dotnet build`
 
-`Frends.Community.Zip.Tests\bin\Release\Frends.Community.Zip.Tests.dll`
+Run tests   
+
+`dotnet test`
 
 Create a nuget package
 
-`nuget pack nuspec/Frends.Community.Zip.nuspec`
+`dotnet pack --configuration Release Frends.Community.Zip`
 
 # Contributing
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
@@ -160,4 +162,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 2.4.0 | Updated dotNetZip nuget to 1.20.0, if it would not have 'We found potential security vulnerabilities in your dependencies.' issue |
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
 | 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path.
-| 3.1.11 | Added possibility to create Zip archive straight into memory. |
+| 3.1.13 | Added possibility to create Zip archive straight into memory. |
