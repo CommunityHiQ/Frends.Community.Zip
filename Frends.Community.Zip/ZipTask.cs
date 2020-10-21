@@ -244,7 +244,7 @@ namespace Frends.Community.Zip
         /// <summary>
         /// Create zip archive into memory. See https://github.com/CommunityHiQ/Frends.Community.Zip
         /// </summary>
-        /// <returns>Object {string FileName, string FilePath, int FileCount, List&lt;string&gt; ArchivedFiles}</returns>
+        /// <returns>Object {byte[] ResultBytes} </returns>
         public static MemoryOutput CreateArchiveInMemory(
             [PropertyTab] MemorySource source,
             [PropertyTab] MemoryOptions options,
