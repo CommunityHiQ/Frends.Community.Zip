@@ -145,4 +145,58 @@ namespace Frends.Community.Zip
         /// </summary>
         public List<string> ArchivedFiles { get; set; }
     }
+
+
+    public class MemoryFiles
+    {
+        /// <summary>
+        /// File name for the bytes to be zipped
+        /// </summary>
+        [DefaultValue(@"file.txt")]
+        [DisplayFormat(DataFormatString = "Text")]
+        public string FileName { get; set; }
+
+        /// <summary>
+        /// File content bytes
+        /// </summary>
+        [DisplayFormat(DataFormatString = "Expression")]
+        public byte[] FileContent { get; set; }
+    }
+
+    public class MemorySource
+    {
+        /// <summary>
+        /// List of files to be zipped
+        /// </summary>
+        public MemoryFiles[] SourceFiles { get; set; }
+    }
+
+    public class MemoryOptions
+    {
+        /// <summary>
+        /// Always: Always use ZIP64 extensions when writing zip archives, even when unnecessary.
+        /// AsNecessary: Use ZIP64 extensions when writing zip archives, as necessary (when single entry or entries in total exceeds 0xFFFFFFFF in size, or when there are more than 65535 entries)
+        /// Never: Do not use ZIP64 extensions when writing zip archives.
+        /// </summary>
+        [DefaultValue(UseZip64Option.AsNecessary)]
+        public UseZip64Option UseZip64 { get; set; }
+
+        /// <summary>
+        /// Add password protection to zip
+        /// </summary>
+        [PasswordPropertyText]
+        public string Password { get; set; }
+
+        /// <summary>
+        /// True: If source files contains duplicate names, they are renamed (example.txt --&gt; example_(1).txt)
+        /// False: Throws error if duplicate file names are found
+        /// </summary>
+        [DefaultValue(true)]
+        public bool RenameDuplicateFiles { get; set; }
+    }
+
+    public class MemoryOutput
+    {
+        public byte[] ResultBytes { get; set; }
+    }
 }

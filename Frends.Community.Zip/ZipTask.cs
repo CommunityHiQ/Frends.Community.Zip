@@ -17,9 +17,9 @@ namespace Frends.Community.Zip
         /// </summary>
         /// <returns>Object {string FileName, string FilePath, int FileCount, List&lt;string&gt; ArchivedFiles}</returns>
         public static Output CreateArchive(
-            [PropertyTab]SourceProperties source,
-            [PropertyTab]DestinationProperties destinationZip,
-            [PropertyTab]Options options,
+            [PropertyTab] SourceProperties source,
+            [PropertyTab] DestinationProperties destinationZip,
+            [PropertyTab] Options options,
             CancellationToken cancellationToken)
         {
             // validate that source and destination folders exist
@@ -30,7 +30,7 @@ namespace Frends.Community.Zip
 
             var sourceFiles = new List<string>();
             // Populate source files list according to input type
-            switch(source.SourceType)
+            switch (source.SourceType)
             {
                 case SourceFilesType.PathAndFileMask:
                     sourceFiles = Directory.EnumerateFiles(source.Directory, source.FileMask, source.IncludeSubFolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly).ToList();
@@ -41,7 +41,8 @@ namespace Frends.Community.Zip
             }
 
             // If no files were found, throw error or return empty Output object
-            if (sourceFiles.Count() == 0) {
+            if (sourceFiles.Count() == 0)
+            {
                 if (options.ThrowErrorIfNoFilesFound)
                     throw new FileNotFoundException($"No files found in {source.Directory} with file mask '{source.FileMask}'");
                 else
@@ -78,7 +79,7 @@ namespace Frends.Community.Zip
                 if (!string.IsNullOrWhiteSpace(destinationZip.Password))
                     zipFile.Password = destinationZip.Password;
 
-                foreach(var fullPath in sourceFiles)
+                foreach (var fullPath in sourceFiles)
                 {
                     // check if cancellation is requested
                     cancellationToken.ThrowIfCancellationRequested();
@@ -86,7 +87,7 @@ namespace Frends.Community.Zip
                     // FlattenFolders = true: add all files to zip root, otherwise adda folders to zip. 
                     // Only available when source type is path and filemask
                     var pathInArchive = (source.FlattenFolders || source.SourceType == SourceFilesType.FileList) ? "" : fullPath.GetRelativePath(source.Directory);
-                    
+
 
                     AddFileToZip(zipFile, fullPath, pathInArchive, destinationZip.RenameDuplicateFiles);
                 }
@@ -97,7 +98,7 @@ namespace Frends.Community.Zip
                 zipFile.Save(destinationZipFileName);
 
                 // remove source files?
-                foreach(var fullPath in sourceFiles)
+                foreach (var fullPath in sourceFiles)
                     if (source.RemoveZippedFiles) File.Delete(fullPath);
 
                 return new Output { Path = destinationZipFileName, FileCount = zipFile.Count, ArchivedFiles = zipFile.EntryFileNames.ToList() };
@@ -238,6 +239,56 @@ namespace Frends.Community.Zip
                 }
             }
             return output;
+        }
+
+        /// <summary>
+        /// Create zip archive into memory. See https://github.com/CommunityHiQ/Frends.Community.Zip
+        /// </summary>
+        /// <returns>Object {byte[] ResultBytes} </returns>
+        public static MemoryOutput CreateArchiveInMemory(
+            [PropertyTab] MemorySource source,
+            [PropertyTab] MemoryOptions options,
+            CancellationToken cancellationToken)
+        {
+            MemoryStream output = new MemoryStream();
+
+            using (ZipFile zip = new ZipFile())
+            {
+                //Set 'UseZip64WhenSaving' - needed for large zip files
+                zip.UseZip64WhenSaving = options.UseZip64.ConvertEnum<Zip64Option>();
+
+                //if password is given add it to archive
+                if (!string.IsNullOrWhiteSpace(options.Password))
+                {
+                    zip.Password = options.Password;
+                }
+
+                foreach (var file in source.SourceFiles)
+                {
+                    // Check if cancellation is requested
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    Stream sourceFile = new MemoryStream(file.FileContent);
+
+                    if (!zip.ContainsEntry(file.FileName))
+                    {
+                        zip.AddEntry(file.FileName, sourceFile);
+                    }
+                    else if (zip.ContainsEntry(file.FileName) && options.RenameDuplicateFiles == true)
+                    {
+                        var renamedFileName = GetRenamedFileName(zip.EntryFileNames, file.FileName);
+                        zip.AddEntry(renamedFileName, sourceFile);
+                    }
+                    else
+                    {
+                        throw new Exception($"File {file.FileName} already exists in zip!");
+                    }
+                }
+
+                zip.Save(output);
+            }
+
+            return new MemoryOutput { ResultBytes = output.ToArray() };
         }
     }
 }
