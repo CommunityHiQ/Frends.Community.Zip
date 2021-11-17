@@ -14,10 +14,10 @@ namespace FRENDS.Community.Zip.Tests
     {
         private static readonly string _basePath = Path.Combine(Path.GetTempPath(), "frends.community.zip.tests");
 
-        private readonly string _dirIn = Path.Combine(_basePath, @"In\");
+        private readonly string _dirIn = Path.Combine(_basePath, $"In{Path.DirectorySeparatorChar}");
         private readonly string _subDir = "Subdir";
         private string _subDirIn;
-        private readonly string _dirOut = Path.Combine(_basePath, @"Out\");
+        private readonly string _dirOut = Path.Combine(_basePath, $"Out{Path.DirectorySeparatorChar}");
         private readonly string _zipFileName = "zip_test.zip";
 
         private SourceProperties _source;
@@ -59,7 +59,7 @@ namespace FRENDS.Community.Zip.Tests
 
         private Output ExecuteCreateArchive()
         {
-            return Frends.Community.Zip.ZipTask.CreateArchive(_source, _destination, _options, CancellationToken.None);
+            return ZipTask.CreateArchive(_source, _destination, _options, CancellationToken.None);
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace FRENDS.Community.Zip.Tests
         [Test]
         public void ZipFiles_DoesNotDeleteSourceFiles()
         {
-            var result = ExecuteCreateArchive();
+            ExecuteCreateArchive();
             var sourceFiles = Directory.GetFiles(_dirIn, "*.txt");
 
             Assert.AreEqual(2, sourceFiles.Length);
@@ -85,7 +85,7 @@ namespace FRENDS.Community.Zip.Tests
         public void ZipFiles_DeletesSourceFiles()
         {
             _source.RemoveZippedFiles = true;
-            var result = ExecuteCreateArchive();
+            ExecuteCreateArchive();
             var sourceFiles = Directory.GetFiles(_dirIn, "*.txt");
 
             Assert.AreEqual(0, sourceFiles.Length);
@@ -96,8 +96,10 @@ namespace FRENDS.Community.Zip.Tests
         {
             _source.SourceType = SourceFilesType.FileList;
             _source.Directory = "";
-            var filePath = new List<string>();
-            filePath.Add(Directory.GetFiles(_dirIn, "*.txt")[0]);
+            var filePath = new List<string>
+            {
+                Directory.GetFiles(_dirIn, "*.txt")[0]
+            };
             _source.FilePathsList = filePath;
 
             var result = ExecuteCreateArchive();
