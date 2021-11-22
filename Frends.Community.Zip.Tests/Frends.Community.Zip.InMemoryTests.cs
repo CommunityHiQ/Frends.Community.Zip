@@ -1,10 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
-using Ionic.Zip;
 using System.Text;
 
 namespace Frends.Community.Zip.InMemoryTests
@@ -14,11 +10,12 @@ namespace Frends.Community.Zip.InMemoryTests
     {
         private static readonly string _basePath = Path.Combine(Path.GetTempPath(), "frends.community.zip.inmemorytests");
 
-        private static readonly string _outPath = Path.Combine(_basePath, @"TestOut\");
+        private static readonly string _outPath = Path.Combine(_basePath, $"TestOut{Path.DirectorySeparatorChar}");
 
         private static readonly string _zipFilePath = Path.Combine(_basePath, "zip_test.zip");
 
-        private static readonly string[] mockFiles = { 
+        private static readonly string[] mockFiles =
+        { 
             @"This is supposed to represent a text file.",
             @"The quick brown fox jumps over the lazy dog. Yet another text file."
         };
@@ -48,7 +45,7 @@ namespace Frends.Community.Zip.InMemoryTests
                         },
                         new MemoryFiles
                         {
-                            FileName = "folder/test2.txt",
+                            FileName = $"folder{Path.DirectorySeparatorChar}test2.txt",
                             FileContent = Encoding.UTF8.GetBytes(mockFiles[1])
                         }
                     }
@@ -68,18 +65,20 @@ namespace Frends.Community.Zip.InMemoryTests
 
             File.WriteAllBytes(_zipFilePath, result.ResultBytes);
 
-            var unzipInput = new UnzipInputProperties {
+            var unzipInput = new UnzipInputProperties
+            {
                 DestinationDirectory = _outPath,
                 SourceFile = _zipFilePath
             };
-            var unzipOptions = new UnzipOptions {
+            var unzipOptions = new UnzipOptions
+            {
                 CreateDestinationDirectory = true
             };
 
             ZipTask.ExtractArchive(unzipInput, unzipOptions, CancellationToken.None);
 
             Assert.True(File.Exists(Path.Combine(_outPath, "test1.txt")));
-            Assert.True(File.Exists(Path.Combine(_outPath, "folder/test2.txt")));
+            Assert.True(File.Exists(Path.Combine(_outPath, $"folder{Path.DirectorySeparatorChar}test2.txt")));
         }
     }
 }

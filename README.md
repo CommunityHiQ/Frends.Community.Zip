@@ -1,6 +1,10 @@
 # Frends.Community.Zip
 FRENDS community task for creating zip archive
 
+[![Actions Status](https://github.com/CommunityHiQ/Frends.Community.Zip/workflows/PackAndPushAfterMerge/badge.svg)](https://github.com/CommunityHiQ/Frends.Community.Zip/actions)
+![MyGet](https://img.shields.io/myget/frends-community/v/Frends.Community.Zip)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
 - [Installing](#installing)
 - [Tasks](#tasks)
   - [Create Archive](#createarchive)
@@ -163,3 +167,4 @@ NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 | 3.0.0 | Added possibility to use ZIP64 for large zip files |
 | 3.1.4 | Added: - FileList as source files input type. - Possibility to Append to existing zip. - Option to remove zipped files from source path. |
 | 3.2.0 | Added new task CreateArchiveInMemory which adds a possibility to create Zip archive straight into memory. |
+| 3.2.1 | DotNetZip updated from 1.13.8 to 1.16.0 |
