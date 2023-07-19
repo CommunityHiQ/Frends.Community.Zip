@@ -5,6 +5,7 @@ using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 
@@ -252,8 +253,18 @@ namespace Frends.Community.Zip
         {
             MemoryStream output = new MemoryStream();
 
+            Encoding encoding = GetEncoding(options.FileEncoding, options.EnableBom, options.EncodingInString);
+
             using (ZipFile zip = new ZipFile())
             {
+                // Use selected encoding for filenames and commentes, if changed from Default.
+                // Otherwise, uses default encoding behaviour by the library (IBM437).
+                if(encoding != null)
+                {
+                    zip.AlternateEncoding = encoding;
+                    zip.AlternateEncodingUsage = ZipOption.Always;
+                }
+                
                 //Set 'UseZip64WhenSaving' - needed for large zip files
                 zip.UseZip64WhenSaving = options.UseZip64.ConvertEnum<Zip64Option>();
 
@@ -289,6 +300,27 @@ namespace Frends.Community.Zip
             }
 
             return new MemoryOutput { ResultBytes = output.ToArray() };
+        }
+
+        private static Encoding GetEncoding(FileEncoding optionsFileEncoding, bool optionsEnableBom, string optionsEncodingInString)
+        {
+            switch (optionsFileEncoding)
+            {
+                case FileEncoding.Default:
+                    return null;
+                case FileEncoding.Other:
+                    return Encoding.GetEncoding(optionsEncodingInString);
+                case FileEncoding.ASCII:
+                    return Encoding.ASCII;
+                case FileEncoding.ANSI:
+                    return Encoding.Default;
+                case FileEncoding.UTF8:
+                    return optionsEnableBom ? new UTF8Encoding(true) : new UTF8Encoding(false);
+                case FileEncoding.Unicode:
+                    return Encoding.Unicode;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

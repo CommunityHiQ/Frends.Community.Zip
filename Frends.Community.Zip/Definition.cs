@@ -11,6 +11,8 @@ namespace Frends.Community.Zip
     public enum SourceFilesType { PathAndFileMask, FileList }
     public enum UseZip64Option { Always, AsNecessary, Never };
 
+    public enum FileEncoding { Default, UTF8, ANSI, ASCII, Unicode, Other }
+
     public class SourceProperties
     {
         /// <summary>
@@ -193,6 +195,20 @@ namespace Frends.Community.Zip
         /// </summary>
         [DefaultValue(true)]
         public bool RenameDuplicateFiles { get; set; }
+
+        /// <summary>
+        /// Encoding for the written content. By selecting 'Other' you can use any encoding.
+        /// </summary>
+        public FileEncoding FileEncoding { get; set; }
+
+        [UIHint(nameof(FileEncoding), "", FileEncoding.Default)]
+        public bool EnableBom { get; set; }
+
+        /// <summary>
+        /// File encoding to be used. A partial list of possible encodings: https://en.wikipedia.org/wiki/Windows_code_page#List
+        /// </summary>
+        [UIHint(nameof(FileEncoding), "", FileEncoding.Other)]
+        public string EncodingInString { get; set; }
     }
 
     public class MemoryOutput
