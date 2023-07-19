@@ -5,6 +5,7 @@ using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 
@@ -252,8 +253,18 @@ namespace Frends.Community.Zip
         {
             MemoryStream output = new MemoryStream();
 
+            System.Text.Encoding encoding = GetEncoding(options.Encoding, options.EnableBom, options.EncodingInString);
+
             using (ZipFile zip = new ZipFile())
             {
+                // Use selected encoding for filenames and commentes, if changed from Default.
+                // Otherwise, uses default encoding behaviour by the library (IBM437).
+                if(encoding != null)
+                {
+                    zip.AlternateEncoding = encoding;
+                    zip.AlternateEncodingUsage = ZipOption.Always;
+                }
+                
                 //Set 'UseZip64WhenSaving' - needed for large zip files
                 zip.UseZip64WhenSaving = options.UseZip64.ConvertEnum<Zip64Option>();
 
@@ -289,6 +300,27 @@ namespace Frends.Community.Zip
             }
 
             return new MemoryOutput { ResultBytes = output.ToArray() };
+        }
+
+        private static System.Text.Encoding GetEncoding(Encoding optionsFileEncoding, bool optionsEnableBom, string optionsEncodingInString)
+        {
+            switch (optionsFileEncoding)
+            {
+                case Encoding.Default:
+                    return null;
+                case Encoding.Other:
+                    return System.Text.Encoding.GetEncoding(optionsEncodingInString);
+                case Encoding.ASCII:
+                    return System.Text.Encoding.ASCII;
+                case Encoding.ANSI:
+                    return System.Text.Encoding.Default;
+                case Encoding.UTF8:
+                    return optionsEnableBom ? new UTF8Encoding(true) : new UTF8Encoding(false);
+                case Encoding.Unicode:
+                    return System.Text.Encoding.Unicode;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }
