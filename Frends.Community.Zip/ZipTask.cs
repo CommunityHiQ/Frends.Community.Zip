@@ -253,7 +253,7 @@ namespace Frends.Community.Zip
         {
             MemoryStream output = new MemoryStream();
 
-            Encoding encoding = GetEncoding(options.FileEncoding, options.EnableBom, options.EncodingInString);
+            System.Text.Encoding encoding = GetEncoding(options.Encoding, options.EnableBom, options.EncodingInString);
 
             using (ZipFile zip = new ZipFile())
             {
@@ -302,22 +302,22 @@ namespace Frends.Community.Zip
             return new MemoryOutput { ResultBytes = output.ToArray() };
         }
 
-        private static Encoding GetEncoding(FileEncoding optionsFileEncoding, bool optionsEnableBom, string optionsEncodingInString)
+        private static System.Text.Encoding GetEncoding(Encoding optionsFileEncoding, bool optionsEnableBom, string optionsEncodingInString)
         {
             switch (optionsFileEncoding)
             {
-                case FileEncoding.Default:
+                case Encoding.Default:
                     return null;
-                case FileEncoding.Other:
-                    return Encoding.GetEncoding(optionsEncodingInString);
-                case FileEncoding.ASCII:
-                    return Encoding.ASCII;
-                case FileEncoding.ANSI:
-                    return Encoding.Default;
-                case FileEncoding.UTF8:
+                case Encoding.Other:
+                    return System.Text.Encoding.GetEncoding(optionsEncodingInString);
+                case Encoding.ASCII:
+                    return System.Text.Encoding.ASCII;
+                case Encoding.ANSI:
+                    return System.Text.Encoding.Default;
+                case Encoding.UTF8:
                     return optionsEnableBom ? new UTF8Encoding(true) : new UTF8Encoding(false);
-                case FileEncoding.Unicode:
-                    return Encoding.Unicode;
+                case Encoding.Unicode:
+                    return System.Text.Encoding.Unicode;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
