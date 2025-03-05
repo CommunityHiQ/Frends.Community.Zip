@@ -17,12 +17,14 @@ namespace Frends.Community.Zip.InMemoryTests
         private static readonly string[] mockFiles =
         { 
             @"This is supposed to represent a text file.",
-            @"The quick brown fox jumps over the lazy dog. Yet another text file."
+            @"The quick brown fox jumps over the lazy dog. Yet another text file.",
+            @"This text file contains some scandinavian letters: äöå ÄÖÅ. There should have been some legible letters before this."
         };
 
         MemorySource testSource;
 
         MemoryOptions testOptions;
+        MemoryOptions testEncodingOptions;
 
         [TearDown]
         public void TearDown()
@@ -41,17 +43,27 @@ namespace Frends.Community.Zip.InMemoryTests
                         new MemoryFiles
                         {
                             FileName = "test1.txt",
-                            FileContent = Encoding.UTF8.GetBytes(mockFiles[0])
+                            FileContent = System.Text.Encoding.UTF8.GetBytes(mockFiles[0])
                         },
                         new MemoryFiles
                         {
                             FileName = $"folder{Path.DirectorySeparatorChar}test2.txt",
-                            FileContent = Encoding.UTF8.GetBytes(mockFiles[1])
+                            FileContent = System.Text.Encoding.UTF8.GetBytes(mockFiles[1])
+                        },
+                        new MemoryFiles
+                        {
+                            FileName = "test3_äöå.txt",
+                            FileContent = System.Text.Encoding.UTF8.GetBytes(mockFiles[2])
                         }
                     }
             };
 
             testOptions = new MemoryOptions();
+
+            testEncodingOptions = new MemoryOptions()
+            {
+                Encoding = Encoding.UTF8
+            };
 
             Directory.CreateDirectory(_basePath);
         }
@@ -79,6 +91,38 @@ namespace Frends.Community.Zip.InMemoryTests
 
             Assert.True(File.Exists(Path.Combine(_outPath, "test1.txt")));
             Assert.True(File.Exists(Path.Combine(_outPath, $"folder{Path.DirectorySeparatorChar}test2.txt")));
+            Assert.True(File.Exists(Path.Combine(_outPath, "test3_äöå.txt")));
+        }
+
+        [Test]
+        public void ZipInMemory_Encoding()
+        {
+            var result = ZipTask.CreateArchiveInMemory(testSource, testEncodingOptions, CancellationToken.None);
+
+            Assert.IsNotNull(result.ResultBytes);
+
+            File.WriteAllBytes(_zipFilePath, result.ResultBytes);
+
+            var unzipInput = new UnzipInputProperties
+            {
+                DestinationDirectory = _outPath,
+                SourceFile = _zipFilePath
+            };
+            var unzipOptions = new UnzipOptions
+            {
+                CreateDestinationDirectory = true
+            };
+
+            ZipTask.ExtractArchive(unzipInput, unzipOptions, CancellationToken.None);
+
+            Assert.True(File.Exists(Path.Combine(_outPath, "test1.txt")));
+            Assert.True(File.ReadAllText(Path.Combine(_outPath, "test1.txt"), System.Text.Encoding.UTF8) == mockFiles[0]);
+
+            Assert.True(File.Exists(Path.Combine(_outPath, $"folder{Path.DirectorySeparatorChar}test2.txt")));
+            Assert.True(File.ReadAllText(Path.Combine(_outPath, $"folder{Path.DirectorySeparatorChar}test2.txt"), System.Text.Encoding.UTF8) == mockFiles[1]);
+
+            Assert.True(File.Exists(Path.Combine(_outPath, "test3_äöå.txt")));
+            Assert.True(File.ReadAllText(Path.Combine(_outPath, "test3_äöå.txt"), System.Text.Encoding.UTF8) == mockFiles[2]);
         }
     }
 }
